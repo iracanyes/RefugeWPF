@@ -1,0 +1,295 @@
+﻿<Window x:Class="RefugeWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RefugeWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="1300"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="Manual"
+        Top="0"
+        Left="0"
+        MinHeight="700"
+        MinWidth="1300"        
+        MouseDown="Window_MouseDown"
+        Background="Transparent"
+        AllowsTransparency="True"
+>
+    <Border CornerRadius="20">
+        <Border.Background>
+            <ImageBrush ImageSource="/images/chat_chien1.jpg" Stretch="Fill" />
+        </Border.Background>
+        <Border  
+            CornerRadius="15" 
+            BorderThickness="5"
+            Opacity="0.75"
+        >
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#4636de" Offset="0"/>
+                    <GradientStop Color="#da34ae" Offset="0.25"/>
+                    <GradientStop Color="#8a16c1" Offset="0.75"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#4636de" Offset="0"/>
+                    <GradientStop Color="#5b42c9" Offset="0.75"/>
+                    <GradientStop Color="#39297d" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <Grid Margin="0,0" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="Header">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="10"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock 
+                        Text="Refuge" 
+                        Foreground="DarkGray"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        FontFamily="Black"
+                        VerticalAlignment="Center"
+                        Margin="15,0,0,0"
+                    />
+
+                    <Button 
+                        x:Name="btnMinimize"
+                        BorderThickness="0"
+                        Content="-"
+                        Foreground="White"
+                        FontSize="16"
+                        Cursor="Hand"
+                        Grid.Column="1"
+                        Click="btnMinimize_Click"
+                    >
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#2aacf0" />
+                                <!-- Style Triggers permet de réaliser un rendu dynamique selon les conditions voulus! 
+                                Ici, le déclencheur s'est le survol d'un élément par la souris
+                                -->
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#2187bd" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                        <!-- Pr activer le changement de couleur du bouton, on doit modifier le template du bouton -->
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    Width="20"
+                                    Height="20"
+                                    CornerRadius="9"
+                                    Background="{TemplateBinding Background}"
+                                >
+                                    <ContentPresenter 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                    />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button 
+                        x:Name="btnMaximize"
+                        BorderThickness="0"
+                        Content="-"
+                        Foreground="White"
+                        FontSize="16"
+                        Cursor="Hand"
+                        Grid.Column="2"
+                        Click="btnMaximize_Click"
+                    >
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#2aacf0" />
+                                <!-- Style Triggers permet de réaliser un rendu dynamique selon les conditions voulus! 
+                                Ici, le déclencheur s'est le survol d'un élément par la souris
+                                -->
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#2187bd" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                        <!-- Pr activer le changement de couleur du bouton, on doit modifier le template du bouton -->
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    Width="20"
+                                    Height="20"
+                                    CornerRadius="9"
+                                    Background="{TemplateBinding Background}"
+                                >
+                                    <ContentPresenter 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                    />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button 
+                        x:Name="btnClose"
+                        BorderThickness="0"
+                        Content="x"
+                        Foreground="White"
+                        FontSize="16"
+                        Cursor="Hand"
+                        Grid.Column="3"
+                        Click="btnClose_Click"
+                    >
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#c65496" />
+                                <!-- Style Triggers permet de réaliser un rendu dynamique selon les conditions voulus! 
+                                Ici, le déclencheur s'est le survol d'un élément par la souris
+                                -->
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#933e6f" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                        <!-- Pr activer le changement de couleur du bouton, on doit modifier le template du bouton -->
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    Width="20"
+                                    Height="20"
+                                    CornerRadius="9"
+                                    Background="{TemplateBinding Background}"
+                                >
+                                    <ContentPresenter 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                    />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+
+                    </Button>
+                </Grid>
+
+                <Grid 
+                    Grid.Row="1"    
+                >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid
+                        x:Name="LeftMenuPanel"
+                        Height="650" Width="200" 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Top" 
+                        RenderTransformOrigin="0.506,0.489"
+                    >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="80" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition />
+
+                        </Grid.RowDefinitions>
+
+                        <Border 
+                            BorderThickness="5" 
+                            CornerRadius="50"
+                            Width="80"
+                        >
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4636de" Offset="0"/>
+                                    <GradientStop Color="#da34ae" Offset="0.25"/>
+                                    <GradientStop Color="#8a16c1" Offset="0.75"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            
+                            <Border.Background>
+                                <ImageBrush 
+                                    ImageSource="/images/refuge_logo200.jpg" 
+                                    Stretch="Uniform"
+                                />
+                            </Border.Background>
+                            <!--
+                            <Image 
+                                Grid.Row="0" 
+                                Source="/images/refuge_logo200.jpg" 
+                                Stretch="Fill"
+                                Width="70"
+                                Height="70"
+                                Margin="0,5"
+                            />
+                            -->
+                        </Border>
+
+                        <TextBlock 
+                            Grid.Row="1" 
+                            Text="Refuge Name" 
+                            FontSize="18"
+                            FontWeight="Bold"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                        />
+
+                        <Menu Grid.Row="2" Width="200">
+                            <MenuItem Header="Animaux" >
+                                <MenuItem Header="Consulter un animal" />
+                                <MenuItem Header="Ajouter un animal" />
+                                <MenuItem Header="Mettre à jour un animal" />
+                                <MenuItem Header="Supprimer un animal" />
+                            </MenuItem>
+                            <MenuItem Header="Contacts" >
+                                <MenuItem Header="Consulter une personne de contact" />
+                                <MenuItem Header="Ajouter une personne de contact" />
+                                <MenuItem Header="Mettre à jour une personne de contact" />
+                                <MenuItem Header="Supprimer une personne de contact" />
+                            </MenuItem>
+                            <MenuItem Header="Refuge" >
+                                <MenuItem Header="Lister les animaux présents au refuge (toutes les entrées)" />
+                                <MenuItem Header="Lister les familles d’accueil par où l’animal est passél" />
+                                <MenuItem Header="Lister les animaux accueillis par une famille d’accueil" />
+                                <MenuItem Header="Ajouter une nouvelle famille d’accueil à un animal" />
+                                <MenuItem Header="Lister les adoptions et leur statut" />
+                                <MenuItem Header="Ajouter une adoption" />
+                                <MenuItem Header="Modifier le statut d’une adoption" />
+                                <MenuItem Header="Ajouter un vaccin (date du vaccin, nom du vaccin, fait ou non fait) à un animal" />
+                            </MenuItem>
+                        </Menu>
+                    </Grid>
+                    <DockPanel Grid.Column="1" Background="Black"  Height="650" Width="1075" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.506,0.489" Grid.ColumnSpan="2">
+
+                    </DockPanel>
+                </Grid>
+
+
+            </Grid>
+        </Border>
+    </Border>
+
+
+</Window>
