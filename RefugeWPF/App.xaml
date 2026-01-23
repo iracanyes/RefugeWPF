@@ -1,9 +1,64 @@
 ﻿<Application x:Class="RefugeWPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:fa="https://schemas.fontawesome.io/icons/"
+             xmlns:vm="clr-namespace:RefugeWPF.CouchePresentation.ViewModel"
+             xmlns:va="clr-namespace:RefugeWPF.CouchePresentation.View.Animal"
+             xmlns:vc="clr-namespace:RefugeWPF.CouchePresentation.View.Contact"
+             xmlns:vr="clr-namespace:RefugeWPF.CouchePresentation.View.Refuge"
              xmlns:local="clr-namespace:RefugeWPF"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+>
     <Application.Resources>
-         
+        <!-- UI Libraries :  HandyControls -->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--  
+                <hc:ThemeResources />
+                -->
+                <hc:Theme  />
+                
+
+                <!-- Other merged dictionaries here -->
+            </ResourceDictionary.MergedDictionaries>
+            <!-- Other app resources here -->
+            
+            <!--====== ViewModel -> View ====================================================-->
+            <DataTemplate DataType="{x:Type vm:AnimalViewModel}">
+                <va:AnimalView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ContactViewModel}">
+                <vc:ContactView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:AdmissionViewModel}">
+                <vr:AdmissionView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:FosterFamilyViewModel}">
+                <vr:FosterFamilyView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:AdoptionViewModel}">
+                <vr:AdoptionView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:VaccinationViewModel}">
+                <vr:VaccinationView />
+            </DataTemplate>
+
+            <!--==== Ajout de FontAwesome icons font =================================================-->
+            <FontFamily x:Key="FontAwesomeRegular" >/fonts/fontawesome7-free-regular-400.woff2#FontAwesomeRegular</FontFamily>
+            <FontFamily x:Key="FontAwesomeSolid" >/fonts/fontawesome7-free-solid-900.woff2#FontAwesomeSolid</FontFamily>
+
+
+        </ResourceDictionary>
+
+        
+
+
+
     </Application.Resources>
 </Application>

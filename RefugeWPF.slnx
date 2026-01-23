@@ -1,3 +1,8 @@
 <Solution>
+  <Folder Name="/Éléments de solution/">
+    <File Path=".env" />
+    <File Path=".gitignore" />
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Project Path="RefugeWPF/RefugeWPF.csproj" />
 </Solution>

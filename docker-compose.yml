@@ -1,9 +1,9 @@
 services:
-#  refugeconsole:
-#    image: ${DOCKER_REGISTRY-}refugeconsole
+#  refugewpf:
+#    image: ${DOCKER_REGISTRY-}refugewpf
 #    build:
 #      context: .
-#      dockerfile: RefugeConsole/Dockerfile
+#      dockerfile: RefugeWPF/Dockerfile
 #    ports:
 #      8080:8080
 #    depends_on:

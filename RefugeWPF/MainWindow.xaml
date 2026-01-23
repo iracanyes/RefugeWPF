@@ -3,21 +3,43 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RefugeWPF"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:nav="clr-namespace:RefugeWPF.CouchePresentation.Navigation"
+        xmlns:vm="clr-namespace:RefugeWPF.CouchePresentation.ViewModel"
+        xmlns:local="clr-namespace:RefugeWPF"        
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1300"
         WindowStyle="None"
         ResizeMode="CanResize"
-        SizeToContent="WidthAndHeight"
         WindowStartupLocation="Manual"
         Top="0"
         Left="0"
-        MinHeight="700"
-        MinWidth="1300"        
-        MouseDown="Window_MouseDown"
+        MinHeight="900"
+        MinWidth="1300"   
         Background="Transparent"
-        AllowsTransparency="True"
+        AllowsTransparency="True" 
+        Icon="/refuge_logo200.jpg"
 >
+    <Window.Resources>
+        <!-- Style pour les icônes des éléments imbriqués du menu à gauche -->
+        <Style TargetType="TextBlock" x:Key="TextBlockFabricIcons">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Foreground" Value="Red" />
+            <Setter Property="Background" Value="Blue" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+        </Style>
+        
+        
+    </Window.Resources>
+
+    <!--
+    <Window.DataContext>         
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+    -->
+    
     <Border CornerRadius="20">
         <Border.Background>
             <ImageBrush ImageSource="/images/chat_chien1.jpg" Stretch="Fill" />
@@ -46,10 +68,10 @@
             <Grid Margin="0,0" Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
-                    <RowDefinition />
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-
-                <Grid x:Name="Header">
+                <!-- ==================Window header =========================== -->
+                <Grid x:Name="Header" MouseDown="Window_MouseDown">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="30"/>
@@ -194,17 +216,20 @@
                     </Button>
                 </Grid>
 
+                <!-- ==================Window Main Content ====================================================== -->
                 <Grid 
-                    Grid.Row="1"    
+                    Grid.Row="1"                    
                 >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="180"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- ================== Sidemenu left =========================== -->
+
                     <Grid
                         x:Name="LeftMenuPanel"
-                        Height="650" Width="200" 
+                        Height="900"
                         HorizontalAlignment="Center" 
                         VerticalAlignment="Top" 
                         RenderTransformOrigin="0.506,0.489"
@@ -213,9 +238,9 @@
                             <RowDefinition Height="80" />
                             <RowDefinition Height="50" />
                             <RowDefinition />
-
                         </Grid.RowDefinitions>
 
+                        <!-- ======= Enterprise logo =========================== -->
                         <Border 
                             BorderThickness="5" 
                             CornerRadius="50"
@@ -247,43 +272,108 @@
                             -->
                         </Border>
 
+                        <!-- ======= Enterprise name =========================== -->
                         <TextBlock 
                             Grid.Row="1" 
                             Text="Refuge Name" 
                             FontSize="18"
                             FontWeight="Bold"
+                            FontFamily="Gentium Book Basic"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                         />
 
-                        <Menu Grid.Row="2" Width="200">
-                            <MenuItem Header="Animaux" >
-                                <MenuItem Header="Consulter un animal" />
-                                <MenuItem Header="Ajouter un animal" />
-                                <MenuItem Header="Mettre à jour un animal" />
-                                <MenuItem Header="Supprimer un animal" />
-                            </MenuItem>
-                            <MenuItem Header="Contacts" >
-                                <MenuItem Header="Consulter une personne de contact" />
-                                <MenuItem Header="Ajouter une personne de contact" />
-                                <MenuItem Header="Mettre à jour une personne de contact" />
-                                <MenuItem Header="Supprimer une personne de contact" />
-                            </MenuItem>
-                            <MenuItem Header="Refuge" >
-                                <MenuItem Header="Lister les animaux présents au refuge (toutes les entrées)" />
-                                <MenuItem Header="Lister les familles d’accueil par où l’animal est passél" />
-                                <MenuItem Header="Lister les animaux accueillis par une famille d’accueil" />
-                                <MenuItem Header="Ajouter une nouvelle famille d’accueil à un animal" />
-                                <MenuItem Header="Lister les adoptions et leur statut" />
-                                <MenuItem Header="Ajouter une adoption" />
-                                <MenuItem Header="Modifier le statut d’une adoption" />
-                                <MenuItem Header="Ajouter un vaccin (date du vaccin, nom du vaccin, fait ou non fait) à un animal" />
-                            </MenuItem>
-                        </Menu>
-                    </Grid>
-                    <DockPanel Grid.Column="1" Background="Black"  Height="650" Width="1075" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.506,0.489" Grid.ColumnSpan="2">
+                        
+                        <!-- ======== Sidemenu left ===========================================================-->
+                        
+                        <hc:SideMenu 
+                            x:Name="MySideMenu" 
+                            Grid.Row="2"  
+                            BorderThickness="1"  
+                            Width="180"
+                            Height="auto"
+                            Margin="0"
+                            
+                        >
+                            <hc:SideMenu.Background>
+                                <SolidColorBrush Color="White" Opacity="0.8"/>
+                            </hc:SideMenu.Background>
+                            
+                            <!--====== SideMenu Template =============================================-->
+                            <!-- <c></hc:SideMenu.ItemsSource><c> ne fonctionne pas! Réessayer plus tard -->
+                           <!--
+                            <hc:SideMenu.ItemTemplate>
+                                <DataTemplate DataType="x:Type nav:MenuItemViewModel">
+                                    <hc:SideMenuItem 
+                                        Header="{Binding Header}"
+                                        Command="{Binding Command}"
+                                        CommandParameter="{Binding CommandParameter}"
+                                        ItemsSource="{Binding Children}"
+                                    ></hc:SideMenuItem>
+                                </DataTemplate> 
+                            </hc:SideMenu.ItemTemplate>
+                            -->
+                            
+                            
+                            
+                            
+                            <hc:SideMenuItem Header="Animaux" Command="{Binding NavigateCommand}" CommandParameter="{Binding Header,RelativeSource={RelativeSource Self}}">
+                                <hc:SideMenuItem.Icon>
+                                    <TextBlock FontFamily="Font Awesome 7 Free Solid" FontSize="18" Text="&#xf6d3;" Foreground="BlueViolet" />
+                                </hc:SideMenuItem.Icon>
+                            </hc:SideMenuItem>
+                            <hc:SideMenuItem Header="Contacts" Command="{Binding NavigateCommand}" CommandParameter="{Binding Header,RelativeSource={RelativeSource Self}}">
+                                <hc:SideMenuItem.Icon>
+                                    <TextBlock FontFamily="Font Awesome 7 Free Solid" FontSize="18" Text="&#xf2b9;" Foreground="BlueViolet" />
+                                </hc:SideMenuItem.Icon>
+                            </hc:SideMenuItem>
 
-                    </DockPanel>
+                            <hc:SideMenuItem Header="Refuge">
+                                <hc:SideMenuItem.Icon>
+                                    <TextBlock FontFamily="Font Awesome 7 Free Solid" FontSize="18" Text="&#xe573;" Foreground="BlueViolet" />
+                                </hc:SideMenuItem.Icon>
+                                <hc:SideMenuItem Header="Admissions" Command="{Binding NavigateCommand}" CommandParameter="{Binding Header,RelativeSource={RelativeSource Self}}">
+                                    <hc:SideMenuItem.Icon>
+                                        <TextBlock FontFamily="Font Awesome 7 Free Solid" FontSize="18" Text="&#xf2f6;" Foreground="BlueViolet" />
+                                    </hc:SideMenuItem.Icon>
+                                </hc:SideMenuItem>
+                                <hc:SideMenuItem Header="Familles d'accueil" Command="{Binding NavigateCommand}" CommandParameter="{Binding Header,RelativeSource={RelativeSource Self}}">
+                                    <hc:SideMenuItem.Icon>
+                                        <TextBlock FontFamily="Font Awesome 7 Free Solid" FontSize="18" Text="&#xe4fa;" Foreground="BlueViolet" />
+                                    </hc:SideMenuItem.Icon>
+                                </hc:SideMenuItem>
+                                <hc:SideMenuItem Header="Adoptions" Command="{Binding NavigateCommand}" CommandParameter="{Binding Header,RelativeSource={RelativeSource Self}}">
+                                    <hc:SideMenuItem.Icon>
+                                        <TextBlock FontFamily="Font Awesome 7 Free Solid" FontSize="18" Text="&#xe00d;" Foreground="BlueViolet" />
+                                    </hc:SideMenuItem.Icon>
+                                </hc:SideMenuItem>
+                                <hc:SideMenuItem Header="Vaccinations" Command="{Binding NavigateCommand}" CommandParameter="{Binding Header,RelativeSource={RelativeSource Self}}">
+                                    <hc:SideMenuItem.Icon>
+                                        <TextBlock FontFamily="Font Awesome 7 Free Solid" FontSize="18" Text="&#xf48e;" Foreground="BlueViolet" />
+                                    </hc:SideMenuItem.Icon>
+                                </hc:SideMenuItem>
+                            </hc:SideMenuItem>                         
+                            
+                            
+                            
+                            
+                        </hc:SideMenu>
+
+                    </Grid>
+                    
+                    <!--========= Zone de contenu principal ========================================-->
+                    <ContentControl 
+                        x:Name="MainContent" 
+                        Grid.Column="1" 
+                        Background="Black"  
+                        Height="850" 
+                        Width="1100" 
+                        HorizontalAlignment="Left" 
+                        Margin="5,0,0,0" 
+                        VerticalAlignment="Top" 
+                        RenderTransformOrigin="0.506,0.489"
+                        Content="{Binding CurrentViewModel}"
+                    ></ContentControl>
                 </Grid>
 
 

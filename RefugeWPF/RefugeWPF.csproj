@@ -9,21 +9,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="fonts\fontawesome7-free-regular-400.otf" />
+    <None Remove="fonts\fontawesome7-free-solid-900.otf" />
     <None Remove="images\chat_chien1.jpeg" />
     <None Remove="images\chat_chien1.jpg" />
+    <None Remove="images\contact_card.png" />
+    <None Remove="images\contact_card.svg" />
     <None Remove="images\refuge_logo.jpg" />
     <None Remove="images\refuge_logo200.jpg" />
+    <None Remove="images\shield-cat-solid-full.jpg" />
+    <None Remove="images\shield-cat-solid-full.svg" />
+    <None Remove="refuge_logo200.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="fonts\fontawesome7-free-regular-400.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <EmbeddedResource Include="images\chat_chien1.jpeg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Resource Include="fonts\fontawesome7-free-solid-900.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\contact_card.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="images\chat_chien1.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\contact_card.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\refuge_logo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -31,12 +50,27 @@
     <Resource Include="images\refuge_logo200.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="images\shield-cat-solid-full.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\shield-cat-solid-full.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="refuge_logo200.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CoucheMetiers\" />
-    <Folder Include="CouchePresentation\" />
-    <Folder Include="CoucheAccesDb\" />
+    <PackageReference Include="HandyControl" Version="3.5.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.1" />
+    <PackageReference Include="Npgsql" Version="10.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update=".env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
