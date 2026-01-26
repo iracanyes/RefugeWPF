@@ -139,6 +139,7 @@ namespace RefugeWPF.CoucheAccesDB
 
 
 
+
                     result.Add(animal);
 
 
@@ -163,7 +164,7 @@ namespace RefugeWPF.CoucheAccesDB
                     throw new AccessDbException("Error while retrieving all animals", ex.ToString());
             }
 
-
+            
 
             return result;
         }

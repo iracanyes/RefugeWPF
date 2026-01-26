@@ -7,6 +7,7 @@
              xmlns:va="clr-namespace:RefugeWPF.CouchePresentation.View.Animal"
              xmlns:vc="clr-namespace:RefugeWPF.CouchePresentation.View.Contact"
              xmlns:vr="clr-namespace:RefugeWPF.CouchePresentation.View.Refuge"
+             xmlns:cvt="clr-namespace:RefugeWPF.CouchePresentation.Converter"
              xmlns:local="clr-namespace:RefugeWPF"
              StartupUri="MainWindow.xaml"
 >
@@ -52,6 +53,9 @@
             <!--==== Ajout de FontAwesome icons font =================================================-->
             <FontFamily x:Key="FontAwesomeRegular" >/fonts/fontawesome7-free-regular-400.woff2#FontAwesomeRegular</FontFamily>
             <FontFamily x:Key="FontAwesomeSolid" >/fonts/fontawesome7-free-solid-900.woff2#FontAwesomeSolid</FontFamily>
+
+            <!-- Chargement du convertisseur AnimalColors to string Color.Name concatenation -->
+            <cvt:AnimalColorsToStringConverter x:Key="AnimalColorsToStringConverter" />
 
 
         </ResourceDictionary>

@@ -1,7 +1,9 @@
-﻿using RefugeWPF.ClassesMetiers.Config;
+﻿using HandyControl.Tools;
+using RefugeWPF.ClassesMetiers.Config;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 
 namespace RefugeWPF
@@ -13,10 +15,18 @@ namespace RefugeWPF
     {
         public App()
         {
-            // Load environment variables 
+            // Chargement des variables d'environnement 
             LoadEnvVars();
+
+            // Définition de la langue d'affichage pour les composants HandyControl.DatePicker
+            ConfigHelper.Instance.SetLang("fr");
         }
 
+        /**
+         * <summary>
+         *  Chargement des variables d'environnement contenues 
+         * </summary>
+         */ 
         public void LoadEnvVars()
         {
             Trace.WriteLine("App - Loading environment variables...");

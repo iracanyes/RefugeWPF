@@ -38,7 +38,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
 
         
 
-        private void CreateAnimal(object sender, RoutedEventArgs e)
+        private void UpdateAnimal(object sender, RoutedEventArgs e)
         {
             AnimalViewModel vm = (AnimalViewModel)this.DataContext;
             
@@ -68,32 +68,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             }
         }
 
-        /**
-         * <summary>
-         *  Evénement click sur le bouton "Ajouter" qui permet d'ouvrir le formulaire d'ajout
-         *  d'un animal
-         * </summary>
-         */ 
-        private void EnableCreateAnimal(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                // Ouverture du formulaire
-                this.OpenForm();
-
-                // Affichage de la sélection des couleurs de l'animal lors de l'ajout
-                FormAnimalColorsSection.Visibility = Visibility.Visible;
-
-                // Nettoyage du formulaire
-                this.ClearForm();
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
+        
 
         /**
          * <summary>
@@ -104,16 +79,17 @@ namespace RefugeWPF.CouchePresentation.View.Animal
         private void EnableUpdateAnimal(object sender, RoutedEventArgs e)
         {
             AnimalViewModel vm = (AnimalViewModel)this.DataContext;
-            RefugeWPF.ClassesMetiers.Model.Entities.Animal? animalToUpdate = vm.Selection;
+
+            // Sauvegarde de la sélection de l'animal à mettre à jour
+            vm.AnimalToUpdate = vm.Animals_DatagridSelection;
+
+            RefugeWPF.ClassesMetiers.Model.Entities.Animal? animalToUpdate = vm.Animals_DatagridSelection;
 
             if(animalToUpdate == null)
             {
                 MessageBox.Show("Sélectionner un animal pour le modifier");
                 return;
             }
-
-            // Cache la sélection des couleurs de l'animal lors de la mise à jour
-            FormAnimalColorsSection.Visibility = Visibility.Collapsed;
 
             try
             {
@@ -171,7 +147,11 @@ namespace RefugeWPF.CouchePresentation.View.Animal
         }
 
 
-
+        /**
+         * <summary>
+         *  Evénement "Click" sur le bouton "Supprimer" un animal sélectionné dans la liste
+         * </summary>
+         */
         private void DeleteAnimal(object sender, RoutedEventArgs e)
         {
             AnimalViewModel vm = (AnimalViewModel)this.DataContext;
@@ -189,7 +169,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
 
             try
             {
-                vm.DeleteAnimal(index);
+                vm.DeleteAnimal(animal);
             }
             catch (Exception ex)
             {
@@ -202,6 +182,11 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             
         }
 
+        /**
+         * <summary>
+         *  Evénement "Click" sur le bouton de soummission du formulaire pour la mise à jour de l'animal
+         * </summary>
+         */ 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             RefugeWPF.ClassesMetiers.Model.Entities.Animal? animal = null;
@@ -209,19 +194,33 @@ namespace RefugeWPF.CouchePresentation.View.Animal
 
             try
             {
-                // Si l'ID de l'animal existe, on met à jour l'animal, sinon on crée un nouvel animal
+                // Si l'ID de l'animal existe, on met à jour l'animal, sinon une erreur est retourné
                 if (AnimalId.Text != "")
                 {
-                    Debug.WriteLine($"Animal ID : {AnimalId.Text}");
-                    animal = new RefugeWPF.ClassesMetiers.Model.Entities.Animal(
+                    Debug.WriteLine($"""
+                        Animal ID : {AnimalId.Text}
+                        AnimalName.Text : {AnimalName.Text}
+                        TypeCat.IsChecked : {TypeCat.IsChecked}
+                        TypeDog.IsChecked : {TypeDog.IsChecked}
+                        GenderMale.IsChecked : {GenderMale.IsChecked}
+                        GenderFemale.IsChecked : {GenderFemale.IsChecked}
+                        AnimalBirthDate.SelectedDate : {AnimalBirthDate.SelectedDate}
+                        AnimalDeathDate.SelectedDate : {AnimalDeathDate.SelectedDate}
+                        AnimalIsSterilized.IsChecked : {AnimalIsSterilized.IsChecked}
+                        AnimalDateSterilization.SelectedDate : {AnimalDateSterilization.SelectedDate}
+                        AnimalParticularity.Text : {AnimalParticularity.Text}
+                        AnimalDescription.Text : {AnimalDescription.Text}
+                    """);
+                        
+                    animal = new ClassesMetiers.Model.Entities.Animal(
                         AnimalId.Text,
                         AnimalName.Text,
-                        (TypeCat.IsChecked == null || (bool)TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,
+                        (TypeCat.IsChecked == null || (bool) TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,
                         (GenderMale.IsChecked == null || (bool)GenderMale.IsChecked) ? GenderType.Male : GenderType.Female,
-                        DateOnly.FromDateTime((DateTime)AnimalBirthDate.SelectedDate!),
-                        DateOnly.FromDateTime((DateTime)AnimalDeathDate.SelectedDate!),
-                        (bool)AnimalIsSterilized.IsChecked!,
-                        DateOnly.FromDateTime((DateTime)AnimalDateSterilization.SelectedDate!),
+                        AnimalBirthDate.SelectedDate != null ? DateOnly.FromDateTime((DateTime) AnimalBirthDate.SelectedDate!) : null,
+                        AnimalDeathDate.SelectedDate != null ? DateOnly.FromDateTime((DateTime)AnimalDeathDate.SelectedDate!) : null,
+                        (bool) AnimalIsSterilized.IsChecked!,
+                        AnimalDateSterilization.SelectedDate != null ? DateOnly.FromDateTime((DateTime) AnimalDateSterilization.SelectedDate!) : null,
                         AnimalParticularity.Text,
                         AnimalDescription.Text
                     );
@@ -230,24 +229,15 @@ namespace RefugeWPF.CouchePresentation.View.Animal
                     // Mettre à jour l'animal
                     vm.UpdateAnimal(animal);
 
+                    this.ClearForm();
+
+                    this.CloseForm();
+
 
                 }
                 else
                 {
-                    animal = new RefugeWPF.ClassesMetiers.Model.Entities.Animal(
-                        AnimalName.Text,
-                        (TypeCat.IsChecked == null || (bool)TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,
-                        (GenderMale.IsChecked == null || (bool)GenderMale.IsChecked) ? GenderType.Male : GenderType.Female,
-                        DateOnly.FromDateTime((DateTime)AnimalBirthDate.SelectedDate!),
-                        DateOnly.FromDateTime((DateTime)AnimalDeathDate.SelectedDate!),
-                        (bool)AnimalIsSterilized.IsChecked!,
-                        DateOnly.FromDateTime((DateTime)AnimalDateSterilization.SelectedDate!),
-                        AnimalParticularity.Text,
-                        AnimalDescription.Text
-                    );
-
-                    // Créer l'animal
-                    vm.CreateAnimal(animal);
+                    throw new Exception($"Aucun identifiant d'animal n'est fourni!");
                 }
 
                 // Clean form
@@ -260,8 +250,9 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Erreur lors l'ajout d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
+                MessageBox.Show(ex.Message);
 
-                throw;
             }
 
         }
@@ -301,9 +292,11 @@ namespace RefugeWPF.CouchePresentation.View.Animal
 
         }
 
+        
+
         /**
          * <summary>
-         *  Efface les valeurs contenues dans les formulaires  
+         *  Efface les valeurs contenues dans le formulaire
          * </summary>
          * 
          */ 
@@ -322,13 +315,15 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             AnimalDateSterilization.SelectedDate = null;
             AnimalParticularity.Text = "";
             AnimalDescription.Text = "";
-            AnimalColorsSelect.SelectedItems.Clear();
 
             // Effacer les valeurs du formulaire de compatibilité pour l'animal
             this.ClearFormAnimalCompatibility();
 
             // Vider la collection contenant les objets AnimalCompatibilityDTO
             vm.AddedAnimalCompatibilities.Clear();
+
+            // Vider la collection des couleurs de l'animal
+            vm.SelectedAnimalColors.Clear();
 
         }
 
@@ -376,6 +371,11 @@ namespace RefugeWPF.CouchePresentation.View.Animal
 
         }
 
+        /**
+         * <summary>
+         *  Ferme le formulaire, en diminuant le grille parent
+         * </summary>
+         */
         private void CloseForm()
         {
             Animals_DataGrid.Height = 550;
