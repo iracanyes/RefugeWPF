@@ -43,6 +43,34 @@ namespace RefugeWPF.ClassesMetiers.Helper
             return attribute == null ? value.ToString() : attribute[0].Description;
         }
 
+        public static IEnumerable<string> GetEnumDescriptions<T>() where T : Enum
+        {            
+            var result = new List<string>();
+            var names = Enum.GetNames(typeof(T));
+
+            try
+            {
+                foreach (var name in names)
+                {
+                    var field = typeof(T).GetField(name.ToString());
+
+                    var fds = field!.GetCustomAttributes(typeof(DescriptionAttribute), true);
+
+                    foreach (DescriptionAttribute fd in fds)
+                    {
+                        result.Add(fd.Description);
+                    }
+
+                }
+            }
+            catch (Exception ex) { 
+                Debug.WriteLine($"Unable to list elements of enum! Message: {ex.ToString()}");
+            }
+            
+            
+            return result;
+        }
+
         /**
          * <summary>
          *  Check if enum value provided is equal to the default value for that enum type (enum value : 0)

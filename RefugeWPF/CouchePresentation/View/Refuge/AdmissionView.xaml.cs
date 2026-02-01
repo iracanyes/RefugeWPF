@@ -1,4 +1,5 @@
-﻿using RefugeWPF.ClassesMetiers.Model.Entities;
+﻿using RefugeWPF.ClassesMetiers.Helper;
+using RefugeWPF.ClassesMetiers.Model.Entities;
 using RefugeWPF.ClassesMetiers.Model.Enums;
 using RefugeWPF.CoucheMetiers.Model.DTO;
 using RefugeWPF.CouchePresentation.ViewModel;
@@ -43,35 +44,21 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
 
         }
 
-        private void CreateAnimal(object sender, RoutedEventArgs e)
+        /**
+         * <summary>
+         *  Recherche de la personne de contact  
+         * </summary>
+         * 
+         */
+        private void SearchAnimalButton_Click(object sender, RoutedEventArgs e)
         {
             AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
 
-            try
-            {
-                RefugeWPF.ClassesMetiers.Model.Entities.Animal animal = new RefugeWPF.ClassesMetiers.Model.Entities.Animal(
-                    AnimalId.Text,
-                    AnimalName.Text,
-                    (TypeCat.IsChecked == null || (bool)TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,
-                    (GenderMale.IsChecked == null || (bool)GenderMale.IsChecked) ? GenderType.Male : GenderType.Female,
-                    DateOnly.FromDateTime((DateTime)AnimalBirthDate.SelectedDate!),
-                    DateOnly.FromDateTime((DateTime)AnimalDeathDate.SelectedDate!),
-                    (bool)AnimalIsSterilized.IsChecked!,
-                    DateOnly.FromDateTime((DateTime)AnimalDateSterilization.SelectedDate!),
-                    AnimalParticularity.Text,
-                    AnimalDescription.Text
-                );
+            vm.SearchAnimal(AnimalSearchByName_Textbox.Text);
 
-                vm.CreateAnimal(animal);
-            }
-            catch (Exception ex)
-            {
-                if (Debugger.IsAttached)
-                    Debug.WriteLine($"Erreur lors de la suppressioin d'un animal. Message: {ex.Message}. Error : {ex.ToString}");
-
-                MessageBox.Show(ex.Message);
-            }
         }
+
+
 
         /**
          * <summary>
@@ -79,7 +66,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          *  d'un animal
          * </summary>
          */
-        private void EnableCreateAnimal(object sender, RoutedEventArgs e)
+        private void EnableCreateAdmission(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -110,35 +97,60 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             RefugeWPF.ClassesMetiers.Model.Entities.Animal? animal = null;
-            AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
+            AdmissionViewModel vm = (AdmissionViewModel) this.DataContext;
+
+            if((string) AdmissionReason_ComboBox.SelectedItem == "inconnu")
+            {
+                MessageBox.Show("Sélectionner une raison d'admission");
+            }
 
             try
             {
-                animal = new RefugeWPF.ClassesMetiers.Model.Entities.Animal(
+                string reason = (string) AdmissionReason_ComboBox.SelectedItem;
+                if(reason == MyEnumHelper.GetEnumDescription<AdmissionType>(AdmissionType.ReturnFosterFamily)
+                    || reason == MyEnumHelper.GetEnumDescription<AdmissionType>(AdmissionType.ReturnAdoption))
+                {
+                    if(vm.AnimalFound == null)
+                    {
+                        MessageBox.Show("Aucun animal n'est sélectionné");
+                        return;
+                    }
+
+                    animal = vm.AnimalFound;
+                }
+                else
+                {
+                    animal = new RefugeWPF.ClassesMetiers.Model.Entities.Animal(
                         AnimalName.Text,
                         (TypeCat.IsChecked == null || (bool)TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,
                         (GenderMale.IsChecked == null || (bool)GenderMale.IsChecked) ? GenderType.Male : GenderType.Female,
-                        DateOnly.FromDateTime((DateTime)AnimalBirthDate.SelectedDate!),
-                        DateOnly.FromDateTime((DateTime)AnimalDeathDate.SelectedDate!),
+                        AnimalBirthDate.SelectedDate != null ? DateOnly.FromDateTime((DateTime)AnimalBirthDate.SelectedDate!) : null,
+                        AnimalDeathDate.SelectedDate != null ? DateOnly.FromDateTime((DateTime)AnimalDeathDate.SelectedDate!) : null,
                         (bool)AnimalIsSterilized.IsChecked!,
-                        DateOnly.FromDateTime((DateTime)AnimalDateSterilization.SelectedDate!),
+                        AnimalDateSterilization.SelectedDate != null ? DateOnly.FromDateTime((DateTime)AnimalDateSterilization.SelectedDate!) : null,
                         AnimalParticularity.Text,
                         AnimalDescription.Text
                     );
 
-                // Transfert vers le ViewModel des couleurs de l'animal
-                foreach (ClassesMetiers.Model.Entities.Color c in AnimalColorsSelect.SelectedItems)
-                {
-                    vm.SelectedAnimalColors.Add(c);
+                    // Transfert vers le ViewModel des couleurs de l'animal
+                    foreach (ClassesMetiers.Model.Entities.Color c in AnimalColorsSelect.SelectedItems)
+                    {
+                        vm.SelectedAnimalColors.Add(c);
+                    }
                 }
+                
+
+                
+                
+
 
                 // Créer l'animal
-                vm.CreateAnimal(animal);
+                vm.CreateAdmission(animal);
 
-                // Clean form
+                // vider les champs du formulaire
                 this.ClearForm();
 
-                // Close Form
+                // Fermer le Formulaire
                 this.CloseForm();
 
 
@@ -146,7 +158,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors l'ajout d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
-                
+                throw new Exception("Erreur lors l'ajout d'un animal.");
             }
 
         }
@@ -154,7 +166,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         /**
          * <summary>
          *  Evénement Click sur le bouton "Ajouter" du formulaire de compatibilité pour l'animal.
-         *  La compatibilité, sa valeur et sa description seront stockés dans une collection.
+         *  La compatibilité, sa valeur et sa description seront stockés dans une collection temporaire.
          *  
          * </summary>
          */
@@ -261,11 +273,12 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void OpenForm()
         {
-            Animals_DataGrid.Height = 270;
+            Admissions_DataGrid.Height = 270;
 
+            // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();
-            RowListAnimal.Height = (GridLength)glConverter.ConvertFrom("300px")!;
-            RowFormAnimal.Height = (GridLength)glConverter.ConvertFrom("600px")!;
+            RowListAdmission.Height = (GridLength)glConverter.ConvertFrom("300px")!;
+            RowFormAdmission.Height = (GridLength)glConverter.ConvertFrom("600px")!;
 
 
 
@@ -278,11 +291,12 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void CloseForm()
         {
-            Animals_DataGrid.Height = 550;
-
+            Admissions_DataGrid.Height = 550;
+            
+            // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();
-            RowListAnimal.Height = (GridLength)glConverter.ConvertFrom("600px")!;
-            RowFormAnimal.Height = (GridLength)glConverter.ConvertFrom("300px")!;
+            RowListAdmission.Height = (GridLength)glConverter.ConvertFrom("600px")!;
+            RowFormAdmission.Height = (GridLength)glConverter.ConvertFrom("300px")!;
 
         }
 

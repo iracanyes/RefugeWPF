@@ -227,6 +227,8 @@ namespace RefugeWPF.CoucheAccesDB
 
                 reader.Close();
 
+                
+
 
             }
             catch (Exception ex)
