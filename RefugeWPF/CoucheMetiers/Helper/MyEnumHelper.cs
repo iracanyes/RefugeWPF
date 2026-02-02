@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 
-namespace RefugeWPF.ClassesMetiers.Helper
+namespace RefugeWPF.CoucheMetiers.Helper
 {
     internal static class MyEnumHelper
     {

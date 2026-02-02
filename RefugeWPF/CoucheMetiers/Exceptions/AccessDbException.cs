@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RefugeWPF.ClassesMetiers.Exceptions
+namespace RefugeWPF.CoucheMetiers.Exceptions
 {
     internal class AccessDbException: Exception
     {

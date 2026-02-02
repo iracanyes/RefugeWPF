@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace RefugeWPF.ClassesMetiers.Model.Enums
+namespace RefugeWPF.CoucheMetiers.Model.Enums
 {
     internal enum RoleNameType
     {

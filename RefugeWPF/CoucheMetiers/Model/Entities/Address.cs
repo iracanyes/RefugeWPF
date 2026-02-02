@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace RefugeWPF.ClassesMetiers.Model.Entities
+namespace RefugeWPF.CoucheMetiers.Model.Entities
 {
     internal class Address
     {

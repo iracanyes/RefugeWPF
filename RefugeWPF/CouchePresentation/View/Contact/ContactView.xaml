@@ -10,82 +10,24 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30px" />
             <RowDefinition Height="50px" />
-            <RowDefinition Height="50px" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Titre de page -->
         <TextBlock 
             Grid.Row="0"
             HorizontalAlignment="Center"
             FontSize="20"
             FontWeight="Bold"
             FontFamily="Bell MT"
-            Text="{Binding Title}" />
-
-        <Grid 
-            Grid.Row="1"            
-        >
-            <StackPanel 
-                Background="BlueViolet" 
-                Orientation="Horizontal" 
-                HorizontalAlignment="Center"
-            >
-                <Button 
-                    Content="Consulter"
-                    Margin="10,0"
-                    FontWeight="SemiBold"
-                    FontSize="12"
-                    Height="32"
-                    Background="BlueViolet"
-                    Foreground="White"
-                    BorderThickness="2"
-                    VerticalAlignment="Center"
-                />
-
-                <Button 
-                    Content="Ajouter"
-                    Margin="10,0"
-                    FontWeight="SemiBold"
-                    FontSize="12"
-                    Height="32"
-                    Background="BlueViolet"
-                    Foreground="White"
-                    BorderThickness="2"
-                    VerticalAlignment="Center"
-                />
-
-                <Button 
-                    Content="Modifier"
-                    Margin="10,0"
-                    FontWeight="SemiBold"
-                    FontSize="12"
-                    Height="32"
-                    Background="BlueViolet"
-                    Foreground="White"
-                    BorderThickness="2"
-                    VerticalAlignment="Center"
-                />
-
-                <Button 
-                    Content="Supprimer"
-                    Margin="10,0"
-                    FontWeight="SemiBold"
-                    FontSize="12"
-                    Height="32"
-                    Background="BlueViolet"
-                    Foreground="White"
-                    BorderThickness="2"
-                    VerticalAlignment="Center"
-                />
-            </StackPanel>
+            Text="{Binding Title}" 
+        />
 
 
-
-        </Grid>
-
+        <!--==== Barre de recherche =============================================-->
         <StackPanel 
             x:Name="SearchAnimalForm"
-            Grid.Row="2"
+            Grid.Row="1"
             Orientation="Horizontal"
             Height="50" 
             Background="BlueViolet" 
@@ -102,7 +44,6 @@
             <TextBox 
                 Width="200"
                 Height="30"
-            
             />
 
             <Button 
@@ -118,10 +59,474 @@
             />
         </StackPanel>
 
-        <ContentControl
-            Grid.Row="3"
-            Content="{Binding CurrentAnimalViewModel}"
-        ></ContentControl>
+        <!--======= Main Content ============================================-->
+        <Grid 
+            Grid.Row="2"
+        >
+
+            <Grid.RowDefinitions>
+                <RowDefinition Name="RowListContact" MaxHeight="500px"/>
+                <RowDefinition Height="50px"/>
+                <RowDefinition Name="RowFormContact" Height="300px"/>
+            </Grid.RowDefinitions>
+
+            <!--========== Liste des admissions =========================================================-->
+            <StackPanel
+                Grid.Row="0"
+                Orientation="Vertical"
+            >
+                <!-- Titre de la liste -->
+                <TextBlock 
+                    Text="Liste des personnes de contact"
+                    HorizontalAlignment="Center"
+                    Margin="0,5"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    FontFamily="Segoe UI"
+                />
+
+                <!--========== Liste des admissions =========================================================-->
+                <DataGrid
+                    Name="Contacts_DataGrid"
+                    Margin="5"
+                    Height="400"
+                    Width="1090"
+                    HorizontalAlignment="Center"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding Contacts}"
+                    SelectedItem="{Binding DataGridSelectedItem}"
+                    AutoGenerateColumns="False"
+                >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Lastname}"/>
+                        <DataGridTextColumn Header="Prénom" Binding="{Binding Firstname}"/>
+                        <DataGridTextColumn Header="Numéro de registre national" Binding="{Binding RegistryNumber}" Width="150"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}"/>
+                        <DataGridTextColumn Header="Téléphone fixe" Binding="{Binding PhoneNumber}" />
+                        <DataGridTextColumn Header="Numéro de portable" Binding="{Binding MobileNumber}" />
+                        <DataGridTextColumn Header="Roles" Binding="{Binding ContactRoles, Converter={StaticResource ContactRolesToStringConverter}}" />
+                        <DataGridTextColumn Header="Adresse" Binding="{Binding Address, Converter={StaticResource AddressToStringConverter}}" Width="300" />
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <!--======== Menu de bouton ====================================================-->
+            <StackPanel 
+                Grid.Row="1"
+                Background="BlueViolet" 
+                Orientation="Horizontal" 
+                HorizontalAlignment="Center"
+            >
+
+                <Button 
+                    Content="Ajouter"
+                    Margin="10,0"
+                    FontWeight="SemiBold"
+                    FontSize="12"
+                    Height="32"
+                    Background="BlueViolet"
+                    Foreground="White"
+                    BorderThickness="2"
+                    VerticalAlignment="Center"
+                    Click="EnableCreateContact"
+                />
+
+                <Button 
+                    Content="Modifier"
+                    Margin="10,0"
+                    FontWeight="SemiBold"
+                    FontSize="12"
+                    Height="32"
+                    Background="BlueViolet"
+                    Foreground="White"
+                    BorderThickness="2"
+                    VerticalAlignment="Center"
+                    Click="EnableUpdateContact"
+                />
+
+                <Button 
+                    Content="Supprimer"
+                    Margin="10,0"
+                    FontWeight="SemiBold"
+                    FontSize="12"
+                    Height="32"
+                    Background="BlueViolet"
+                    Foreground="White"
+                    BorderThickness="2"
+                    VerticalAlignment="Center"
+                    Click="DeleteContact"
+                />
+
+
+            </StackPanel>
+
+            <!--========= Panneau en bas de page ===========================================-->
+
+            <StackPanel
+                Name="ContactFormSection"
+                Grid.Row="2"
+                Orientation="Vertical"
+                Margin="10,5,5,5"
+        
+            >
+                <StackPanel.Background>
+                    <SolidColorBrush Color="Wheat" Opacity="0.7" />
+                </StackPanel.Background>
+
+                <TextBlock 
+                    Text="{Binding TitleForm}"
+                    Margin="0,10,0,5"
+                    HorizontalAlignment="Center"
+                    Padding="5"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    FontFamily="Segoe UI"
+                    Foreground="BlueViolet"
+                />
+
+                <ScrollViewer 
+                    VerticalScrollBarVisibility="Visible"
+                    Margin="10,0,0,0"
+                    Height="320"
+                >
+                    <StackPanel
+                        Orientation="Vertical"    
+                    >
+                                               
+
+                        <!--========= Formulaire personne de contact =================================================-->
+                        <GroupBox
+                            Name="SectionFormContact"
+                            Header="Personne de contact"
+                            Margin="10"   
+                            FontSize="14"
+                            FontFamily="Segoe UI"
+                            FontWeight="Bold"
+                        >
+                            <StackPanel
+                                Orientation="Vertical"    
+                            >
+
+
+                                <!-- ====== Formulaire personne de contact  ========================-->
+                                <StackPanel
+                                    Name="FormContactSection"
+                                    Orientation="Horizontal"    
+                                >
+                                    <!-- Changement dynamique de l'affichage de la section  => Affiche le panneau si l'animal n'est pas déjà enregistré -->
+                                    <!--
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AnimalAlreadyRegistered}" Value="false">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    -->
+                                    
+                                    <!-- Formulaire contact - nom, prénom, numéro de registre national -->
+                                    <StackPanel
+                                        Orientation="Vertical"
+                                        Margin="0,0,0,0"
+                                        HorizontalAlignment="Left"
+                                    >
+                                        
+                                        <!-- Formulaire Contact - Numéro de registre national -->
+                                        <StackPanel 
+                                            Orientation="Vertical"
+                                            Margin="0,0,0,5"
+                                        >
+                                            <TextBlock 
+                                                Text="Numéro de registre national"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactRegistryNumber_TextBox"
+                                                Width="250"
+                                                Text="{Binding RegistryNumber, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+                                        <!-- Formulaire Contact - nom -->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                        >
+                                            
+                                            <TextBlock 
+                                                Text="Nom"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactLastname"
+                                                Width="250"
+                                                Text="{Binding Lastname, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                        <!-- Formulaire Contact - prénom -->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                        >
+                                            <TextBlock 
+                                                Text="Prénom"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactFirstname"
+                                                Width="250"
+                                                Text="{Binding Firstname, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                       
+                                    </StackPanel>
+
+
+                                    <!-- Formulaire Contact - Email, numéro de téléphone fixe et numéro de portable -->
+                                    <StackPanel
+                                        Orientation="Vertical"
+                                        Margin="5,0,5,0"
+                                        HorizontalAlignment="Left"
+                                    >
+                                        <!-- Formulaire Contact - Email -->
+                                        <StackPanel 
+                                            Orientation="Vertical"
+                                            Margin="5,0"
+                                        >
+                                            <TextBlock 
+                                                Text="Email"
+                                                Margin="0,0,0,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox
+                                                Name="ContactEmail"
+                                                Width="250"
+                                                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                        <!-- Formulaire Contact - Numéro de téléphone fixe -->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                            Margin="5,0,0,10"
+                                            HorizontalAlignment="Left"
+                                         >
+                                            <TextBlock 
+                                                Text="Numéro de téléphone fixe"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactPhoneNumber_TextBox"
+                                                Width="250"
+                                                Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                        <!-- Formulaire Contact - MobilePhone -->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                            HorizontalAlignment="Left"
+                                        >
+                                            <TextBlock 
+                                                Text="Numéro de portable"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactMobilePhone_TextBox"
+                                                Width="250"
+                                                Text="{Binding MobileNumber, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                    </StackPanel>
+
+
+                                    <!--=========== Formulaire Contact - Address ==================================================-->
+                                    <StackPanel
+                                        Orientation="Vertical"
+                                        Margin="10,0"
+                                    >
+                                        <!-- Formulaire Adresse de contact -  Rue =========================================-->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                        >
+                                            <TextBlock 
+                                                Text="Rue"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactAddressStreet"
+                                                Width="250"
+                                                Text="{Binding Street, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                        <!-- Formulaire Adresse de contact -  Ville =========================================-->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                        >
+                                            <TextBlock 
+                                                Text="Ville"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactAddressCity"
+                                                Width="250"
+                                                Text="{Binding City, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                        <!-- Formulaire Adresse de contact -  Province =========================================-->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                        >
+                                            <TextBlock 
+                                                Text="Province"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactAddressState"
+                                                Width="250"
+                                                Text="{Binding State, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                        <!-- Formulaire Adresse de contact -  Code postal =========================================-->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                        >
+                                            <TextBlock 
+                                                Text="Code postal"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactAddressZipCode"
+                                                Width="250"
+                                                Text="{Binding ZipCode, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+                                        <!-- Formulaire Adresse de contact -  Pays =========================================-->
+                                        <StackPanel
+                                            Orientation="Vertical"
+                                        >
+                                            <TextBlock 
+                                                Text="Pays"
+                                                Margin="0,0,10,5"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontFamily="Segoe UI"
+                                                FontWeight="SemiBold"
+                                            />
+                                            <TextBox 
+                                                Name="ContactAddressCountry"
+                                                Width="250"
+                                                Text="{Binding Country, UpdateSourceTrigger=PropertyChanged}"
+                                            />
+                                        </StackPanel>
+
+
+                                    </StackPanel>
+
+                                    <!--================ Formulaire des rôles de la personne de contact ===================================-->
+                                    <StackPanel
+                                        Orientation="Vertical"
+                                        Name="FormContactRolesSection"
+                                    >
+
+                                        <TextBlock 
+                                            Text="Rôles de la personne de contact"
+                                            Margin="0,0,10,5"
+                                            VerticalAlignment="Center"
+                                            FontSize="14"
+                                            FontFamily="Segoe UI"
+                                            FontWeight="Bold"      
+                                        />
+                                        <ListBox
+                                            Name="Roles_ListBox"
+                                            ItemsSource="{Binding Roles}"
+                                            DisplayMemberPath="Name"
+                                            SelectionMode="Multiple"
+                                        >
+
+                                        </ListBox>
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                                
+                            </StackPanel>
+
+
+
+                        </GroupBox>
+
+
+
+                    </StackPanel>
+
+
+                </ScrollViewer>
+                <!-- Formulaire - Bouton d'action -->
+                <StackPanel
+                HorizontalAlignment="Center"    
+            >
+                    <Button
+                    Margin="0,5" 
+                    Background="GreenYellow"
+                    Click="SubmitButton_Click"
+                >
+                        Confirmer
+                    </Button>
+                </StackPanel>
+
+
+            </StackPanel>
+
+
+        </Grid>
 
 
 

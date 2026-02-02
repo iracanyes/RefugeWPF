@@ -56,7 +56,8 @@
 
             <!-- Chargement du convertisseur AnimalColors to string Color.Name concatenation -->
             <cvt:AnimalColorsToStringConverter x:Key="AnimalColorsToStringConverter" />
-
+            <cvt:AddressToStringConverter x:Key="AddressToStringConverter" />
+            <cvt:ContactRolesToStringConverter x:Key="ContactRolesToStringConverter" />
 
         </ResourceDictionary>
 

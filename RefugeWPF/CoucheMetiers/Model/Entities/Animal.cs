@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Logging;
-using RefugeWPF.ClassesMetiers.Helper;
-using RefugeWPF.ClassesMetiers.Model.Enums;
+using RefugeWPF.CoucheMetiers.Helper;
+using RefugeWPF.CoucheMetiers.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace RefugeWPF.ClassesMetiers.Model.Entities
+namespace RefugeWPF.CoucheMetiers.Model.Entities
 {
     internal class Animal
     {

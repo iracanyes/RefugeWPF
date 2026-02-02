@@ -1,5 +1,5 @@
 ﻿using HandyControl.Tools;
-using RefugeWPF.ClassesMetiers.Config;
+using RefugeWPF.CoucheMetiers.Config;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;

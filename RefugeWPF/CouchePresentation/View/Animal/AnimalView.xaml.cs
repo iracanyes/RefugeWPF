@@ -1,8 +1,8 @@
 ﻿
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using RefugeWPF.ClassesMetiers.Helper;
-using RefugeWPF.ClassesMetiers.Model.Entities;
-using RefugeWPF.ClassesMetiers.Model.Enums;
+using RefugeWPF.CoucheMetiers.Helper;
+using RefugeWPF.CoucheMetiers.Model.Entities;
+using RefugeWPF.CoucheMetiers.Model.Enums;
 using RefugeWPF.CoucheMetiers.Model.DTO;
 using RefugeWPF.CouchePresentation.ViewModel;
 using System;
@@ -44,7 +44,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             
             try
             {
-                RefugeWPF.ClassesMetiers.Model.Entities.Animal animal = new RefugeWPF.ClassesMetiers.Model.Entities.Animal(
+                RefugeWPF.CoucheMetiers.Model.Entities.Animal animal = new RefugeWPF.CoucheMetiers.Model.Entities.Animal(
                     AnimalId.Text,
                     AnimalName.Text,
                     (TypeCat.IsChecked == null || (bool)TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,
@@ -83,7 +83,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             // Sauvegarde de la sélection de l'animal à mettre à jour
             vm.AnimalToUpdate = vm.Animals_DatagridSelection;
 
-            RefugeWPF.ClassesMetiers.Model.Entities.Animal? animalToUpdate = vm.Animals_DatagridSelection;
+            RefugeWPF.CoucheMetiers.Model.Entities.Animal? animalToUpdate = vm.Animals_DatagridSelection;
 
             if(animalToUpdate == null)
             {
@@ -157,7 +157,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             AnimalViewModel vm = (AnimalViewModel)this.DataContext;
 
             int index = Animals_DataGrid.SelectedIndex;
-            RefugeWPF.ClassesMetiers.Model.Entities.Animal animal = (RefugeWPF.ClassesMetiers.Model.Entities.Animal) Animals_DataGrid.SelectedItem;
+            RefugeWPF.CoucheMetiers.Model.Entities.Animal animal = (RefugeWPF.CoucheMetiers.Model.Entities.Animal) Animals_DataGrid.SelectedItem;
 
             Debug.WriteLine($"Animal selected : {animal}");
 
@@ -189,7 +189,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
          */ 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
-            RefugeWPF.ClassesMetiers.Model.Entities.Animal? animal = null;
+            RefugeWPF.CoucheMetiers.Model.Entities.Animal? animal = null;
             AnimalViewModel vm = (AnimalViewModel)this.DataContext;
 
             try
@@ -212,7 +212,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
                         AnimalDescription.Text : {AnimalDescription.Text}
                     """);
                         
-                    animal = new ClassesMetiers.Model.Entities.Animal(
+                    animal = new CoucheMetiers.Model.Entities.Animal(
                         AnimalId.Text,
                         AnimalName.Text,
                         (TypeCat.IsChecked == null || (bool) TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,

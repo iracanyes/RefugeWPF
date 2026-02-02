@@ -1,6 +1,6 @@
-﻿using RefugeWPF.ClassesMetiers.Helper;
-using RefugeWPF.ClassesMetiers.Model.Entities;
-using RefugeWPF.ClassesMetiers.Model.Enums;
+﻿using RefugeWPF.CoucheMetiers.Helper;
+using RefugeWPF.CoucheMetiers.Model.Entities;
+using RefugeWPF.CoucheMetiers.Model.Enums;
 using RefugeWPF.CoucheMetiers.Model.DTO;
 using RefugeWPF.CouchePresentation.ViewModel;
 using System;
@@ -96,7 +96,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
-            RefugeWPF.ClassesMetiers.Model.Entities.Animal? animal = null;
+            RefugeWPF.CoucheMetiers.Model.Entities.Animal? animal = null;
             AdmissionViewModel vm = (AdmissionViewModel) this.DataContext;
 
             if((string) AdmissionReason_ComboBox.SelectedItem == "inconnu")
@@ -120,7 +120,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
                 }
                 else
                 {
-                    animal = new RefugeWPF.ClassesMetiers.Model.Entities.Animal(
+                    animal = new RefugeWPF.CoucheMetiers.Model.Entities.Animal(
                         AnimalName.Text,
                         (TypeCat.IsChecked == null || (bool)TypeCat.IsChecked) ? AnimalType.Cat : AnimalType.Dog,
                         (GenderMale.IsChecked == null || (bool)GenderMale.IsChecked) ? GenderType.Male : GenderType.Female,
@@ -133,7 +133,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
                     );
 
                     // Transfert vers le ViewModel des couleurs de l'animal
-                    foreach (ClassesMetiers.Model.Entities.Color c in AnimalColorsSelect.SelectedItems)
+                    foreach (CoucheMetiers.Model.Entities.Color c in AnimalColorsSelect.SelectedItems)
                     {
                         vm.SelectedAnimalColors.Add(c);
                     }

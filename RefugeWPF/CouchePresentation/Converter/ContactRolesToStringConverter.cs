@@ -7,13 +7,13 @@ using System.Windows.Data;
 
 namespace RefugeWPF.CouchePresentation.Converter
 {
-    class AnimalColorsToStringConverter: IValueConverter
+    class ContactRolesToStringConverter: IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is IEnumerable<AnimalColor> animalColors)
+            if(value is IEnumerable<ContactRole> contactRoles)
             {
-                return string.Join(", ", animalColors.Select(ac => ac.Color.Name));
+                return string.Join(", ", contactRoles.Select(cr => cr.Role.Name));
             }
 
             return string.Empty;

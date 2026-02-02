@@ -1,5 +1,5 @@
 ﻿using Npgsql;
-using RefugeWPF.ClassesMetiers.Model.Entities;
+using RefugeWPF.CoucheMetiers.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +8,13 @@ namespace RefugeWPF.CoucheAccesDB
 {
     internal interface IContactDataService
     {
+        /**
+         * <summary>
+         *  Récupérer les personnes de contact 
+         * </summary>
+         */
+        List<Contact> GetContacts();
+
 
         /**
          * <summary>
@@ -30,12 +37,16 @@ namespace RefugeWPF.CoucheAccesDB
          */
         Contact GetContactByRegistryNumber(string registryNumber);
 
+        Contact HandleCreateContact(Contact contact);
+
+        
+
         /**
          * <summary>
          *  Ajouter une personne de contact
          * </summary>
          */
-        Contact CreateContact(Contact contact);
+        Contact CreateContact(Contact contact, NpgsqlTransaction transaction);
 
         /**
           * <summary>
@@ -49,7 +60,13 @@ namespace RefugeWPF.CoucheAccesDB
          *  Mettre à jour les informations de contact 
          * </summary>
          */
-        Contact UpdateContact(Contact contact);
+        Contact UpdateContact(Contact contact, NpgsqlTransaction? transaction = null);
+        /**
+         * <summary>
+         *  Mettre à jour les informations de contact et son adresse 
+         * </summary>
+         */
+        Contact HandleUpdateContact(Contact contact);
 
         /**
          * <summary>

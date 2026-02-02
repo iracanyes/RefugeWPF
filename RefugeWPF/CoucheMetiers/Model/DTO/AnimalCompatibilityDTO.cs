@@ -1,4 +1,4 @@
-﻿using RefugeWPF.ClassesMetiers.Model.Entities;
+﻿using RefugeWPF.CoucheMetiers.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;

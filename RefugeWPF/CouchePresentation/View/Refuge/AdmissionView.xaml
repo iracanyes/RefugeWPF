@@ -91,6 +91,7 @@
                 <DataGrid
                     Name="Admissions_DataGrid"
                     Margin="5"
+                    Height="400"
                     HorizontalAlignment="Center"
                     IsReadOnly="True"
                     ItemsSource="{Binding Admissions}"

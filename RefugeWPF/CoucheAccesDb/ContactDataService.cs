@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Npgsql;
-using RefugeWPF.ClassesMetiers.Exceptions;
-using RefugeWPF.ClassesMetiers.Model.Entities;
+using RefugeWPF.CoucheMetiers.Exceptions;
+using RefugeWPF.CoucheMetiers.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -120,11 +120,41 @@ namespace RefugeWPF.CoucheAccesDB
             
         }
         
-        public Contact CreateContact(Contact contact)
+        public Contact HandleCreateContact(Contact contact)
+        {
+            NpgsqlTransaction transaction = this.SqlConn.BeginTransaction();
+            Contact? result = null;
+
+            try
+            {
+                this.CreateAddress(contact.Address, transaction);
+
+                result = this.CreateContact(contact, transaction);
+
+                foreach(ContactRole cr in contact.ContactRoles)
+                {
+                    this.CreateContactRole(cr, transaction);
+                }
+
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (transaction != null)
+                    transaction.Rollback();
+
+                Debug.WriteLine($"Erreur lors de la création d'une personne de contact.\nMessage : {ex.Message}");
+                throw;
+            }
+
+            return result;
+        }
+
+        public Contact CreateContact(Contact contact, NpgsqlTransaction? transaction)
         {
             Contact? result = null;
             NpgsqlCommand? sqlCmd = null;
-            NpgsqlTransaction transaction = this.SqlConn.BeginTransaction();
 
             try
             {
@@ -163,16 +193,8 @@ namespace RefugeWPF.CoucheAccesDB
 
                 if(nbRowAffected == 0) throw new AccessDbException(sqlCmd.CommandText, $"Unable to create a Contact instance in DB!\nObject:\n{contact}");
 
-                // Insert all roles for the contact
-                foreach (ContactRole contactRole in contact.ContactRoles)
-                {
-                    bool contactRoleCreated = this.CreateContactRole(contactRole, transaction);
 
-                    if (!contactRoleCreated) throw new AccessDbException($"", $"Unable to create a ContactRole instance with data : {contactRole}.");
-                }
-
-                // Commit transaction
-                transaction.Commit();
+               
 
                 result = this.GetContactByRegistryNumber(contact.RegistryNumber);
             }
@@ -195,6 +217,90 @@ namespace RefugeWPF.CoucheAccesDB
 
             return result!;
 
+        }
+
+        public List<Contact> GetContacts()
+        {
+            List<Contact> result = new List<Contact>();
+            NpgsqlCommand? sqlCmd = null;
+            NpgsqlDataReader? reader = null;
+
+            try
+            {
+                sqlCmd = new NpgsqlCommand(
+                    $"""
+                    SELECT c."Id" AS "Id",
+                           c."Firstname" AS "Firstname",
+                           c."Lastname" AS "Lastname",
+                           c."RegistryNumber" AS "RegistryNumber",
+                           c."Email" AS "Email",
+                           c."MobileNumber" AS "MobileNumber",
+                           c."PhoneNumber" AS "PhoneNumber",
+                           a."Id" AS "AddressId",
+                           a."Street" AS "Street",
+                           a."City" AS "City",
+                           a."State" AS "State" ,
+                           a."ZipCode" AS "ZipCode",
+                           a."Country" AS "Country" 
+                    FROM public."Contacts" c
+                    INNER JOIN public."Addresses" a
+                        ON c."AddressId" = a."Id"
+                    """,
+                    this.SqlConn
+                );
+
+                
+                sqlCmd.Prepare();
+
+
+                reader = sqlCmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Address address = new Address(
+                        new Guid(Convert.ToString(reader["AddressId"])!),
+                        Convert.ToString(reader["Street"])!,
+                        Convert.ToString(reader["City"])!,
+                        Convert.ToString(reader["State"])!,
+                        Convert.ToString(reader["ZipCode"])!,
+                        Convert.ToString(reader["Country"])!
+                    );
+
+                    result.Add( new Contact(
+                        new Guid(Convert.ToString(reader["Id"])!),
+                        Convert.ToString(reader["Firstname"])!,
+                        Convert.ToString(reader["Lastname"])!,
+                        Convert.ToString(reader["RegistryNumber"])!,
+                        Convert.ToString(reader["Email"])!,
+                        Convert.ToString(reader["PhoneNumber"])!,
+                        Convert.ToString(reader["MobileNumber"])!,
+                        address
+                    ));
+
+
+                }
+
+                reader.Close();
+
+                // Attach contact's roles to contact
+                foreach(Contact co in result)
+                    this.GetContactRoles(co);
+
+
+            }
+            catch (Exception ex)
+            {
+                reader?.Close();
+
+                Debug.WriteLine($"Unable to create a contact info instance.\nReason : \n{ex.Message}\nException : \n{ex}");
+                if (sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, ex.Message);
+                else
+                    throw new AccessDbException("sqlCmd is null", $"Unable to create a contact info instance. Message : {ex.Message}\nException : {ex}");
+
+            }
+
+            return result;
         }
 
         public Contact GetContactByRegistryNumber(string registryNumber)
@@ -349,17 +455,13 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
-        public Contact UpdateContact(Contact contact) {
+        public Contact UpdateContact(Contact contact, NpgsqlTransaction? transaction = null) {
             Contact? result = null;
             NpgsqlCommand? sqlCmd = null;
-            NpgsqlTransaction transaction = this.SqlConn.BeginTransaction();
 
             try
             {
-                // First, update the address
-                bool addressUpdated = this.UpdateAddress(contact.Address, transaction);
-
-                if (!addressUpdated) throw new AccessDbException("sqlCmd - updateAddress", $"Unexpected error while updating the address with info {contact.Address}."); 
+                 
 
                 sqlCmd = new NpgsqlCommand(
                     $"""
@@ -403,7 +505,8 @@ namespace RefugeWPF.CoucheAccesDB
                 if (nbRowAffected == 0) throw new AccessDbException(sqlCmd.CommandText, $"Unable to update a Contact instance in DB!\nObject:\n{contact}");
 
                 // Commit transaction
-                transaction.Commit();
+                if(transaction != null)
+                    transaction.Commit();
 
                 result = this.GetContactByRegistryNumber(contact.RegistryNumber);
 
@@ -425,6 +528,31 @@ namespace RefugeWPF.CoucheAccesDB
             if (result == null) throw new Exception($"Unable to update a contact instance with registry number : {contact.RegistryNumber}");
 
             return result;
+        }
+
+        public Contact HandleUpdateContact(Contact contact)
+        {
+            Contact? result = null;
+            NpgsqlTransaction transaction = this.SqlConn.BeginTransaction();
+
+            try
+            {
+                // First, update the address
+                bool addressUpdated = this.UpdateAddress(contact.Address, transaction);
+
+                if (!addressUpdated) throw new AccessDbException("sqlCmd - updateAddress", $"Unexpected error while updating the address with info {contact.Address}.");
+
+                result = this.UpdateContact(contact, transaction);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return result;
+
         }
 
         public bool DeleteContactRole(ContactRole contactRole, NpgsqlTransaction? transaction = null)

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RefugeWPF.ClassesMetiers.Model.Entities
+namespace RefugeWPF.CoucheMetiers.Model.Entities
 {
     internal class Contact
     {

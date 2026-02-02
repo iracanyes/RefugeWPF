@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RefugeWPF.ClassesMetiers.Model.Enums
+namespace RefugeWPF.CoucheMetiers.Model.Enums
 {
     /**
      * <summary>

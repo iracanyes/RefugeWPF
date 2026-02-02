@@ -7,13 +7,13 @@ using System.Windows.Data;
 
 namespace RefugeWPF.CouchePresentation.Converter
 {
-    class AnimalColorsToStringConverter: IValueConverter
+    class AddressToStringConverter: IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is IEnumerable<AnimalColor> animalColors)
+            if(value is Address address)
             {
-                return string.Join(", ", animalColors.Select(ac => ac.Color.Name));
+                return $"{address.Street}, {address.City}, {address.ZipCode} {address.State}, {address.Country}";
             }
 
             return string.Empty;

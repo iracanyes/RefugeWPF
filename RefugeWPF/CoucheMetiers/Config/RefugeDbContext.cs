@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using RefugeWPF.ClassesMetiers.Helper;
-using RefugeWPF.ClassesMetiers.Model.Entities;
-using RefugeWPF.ClassesMetiers.Model.Enums;
+using RefugeWPF.CoucheMetiers.Helper;
+using RefugeWPF.CoucheMetiers.Model.Entities;
+using RefugeWPF.CoucheMetiers.Model.Enums;
 
-namespace RefugeWPF.ClassesMetiers.Config
+namespace RefugeWPF.CoucheMetiers.Config
 {
     internal class RefugeDbContext : DbContext
     {

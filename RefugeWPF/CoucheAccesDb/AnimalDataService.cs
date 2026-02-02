@@ -1,9 +1,9 @@
 ﻿  using Microsoft.Extensions.Logging;
 using Npgsql;
-using RefugeWPF.ClassesMetiers.Exceptions;
-using RefugeWPF.ClassesMetiers.Helper;
-using RefugeWPF.ClassesMetiers.Model.Entities;
-using RefugeWPF.ClassesMetiers.Model.Enums;
+using RefugeWPF.CoucheMetiers.Exceptions;
+using RefugeWPF.CoucheMetiers.Helper;
+using RefugeWPF.CoucheMetiers.Model.Entities;
+using RefugeWPF.CoucheMetiers.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

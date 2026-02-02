@@ -1,6 +1,6 @@
-﻿using RefugeWPF.ClassesMetiers.Helper;
-using RefugeWPF.ClassesMetiers.Model.Entities;
-using RefugeWPF.ClassesMetiers.Model.Enums;
+﻿using RefugeWPF.CoucheMetiers.Helper;
+using RefugeWPF.CoucheMetiers.Model.Entities;
+using RefugeWPF.CoucheMetiers.Model.Enums;
 using RefugeWPF.CoucheAccesDB;
 using RefugeWPF.CoucheMetiers.Model.DTO;
 using System;

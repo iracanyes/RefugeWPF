@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Npgsql;
-using RefugeWPF.ClassesMetiers.Exceptions;
+using RefugeWPF.CoucheMetiers.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

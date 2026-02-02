@@ -1,4 +1,4 @@
-﻿using RefugeWPF.ClassesMetiers.Model.Entities;
+﻿using RefugeWPF.CoucheMetiers.Model.Entities;
 using RefugeWPF.CoucheAccesDB;
 using RefugeWPF.CoucheMetiers.Model.DTO;
 using System;

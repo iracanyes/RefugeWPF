@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RefugeWPF.ClassesMetiers.Config
+namespace RefugeWPF.CoucheMetiers.Config
 {
     internal class DotEnv
     {
@@ -41,7 +41,7 @@ namespace RefugeWPF.ClassesMetiers.Config
                 }
                 else
                 {
-                    throw new NotSupportedException("The environment variable is not supported! Please update ClassesMetiers.Config.DotEnv class");
+                    throw new NotSupportedException("The environment variable is not supported! Please update CoucheMetiers.Config.DotEnv class");
                 }
             }
 
