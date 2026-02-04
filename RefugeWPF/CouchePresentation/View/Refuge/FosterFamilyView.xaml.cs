@@ -1,5 +1,9 @@
-﻿using System;
+﻿using RefugeWPF.CoucheMetiers.Helper;
+using RefugeWPF.CoucheMetiers.Model.Enums;
+using RefugeWPF.CouchePresentation.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +25,206 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         public FosterFamilyView()
         {
             InitializeComponent();
+            this.DataContext = new FosterFamilyViewModel();
         }
+
+
+        public void EnableAnimalFosterFamiliesList(object sender, RoutedEventArgs e)
+        {
+            SearchFosterFamilyAnimals.Visibility = Visibility.Collapsed;
+            SearchAnimalFosterFamilies.Visibility = Visibility.Visible;
+            
+
+            FosterFamilyAnimals_DataGrid.Visibility = Visibility.Collapsed;
+            AnimalFosterFamilies_DataGrid.Visibility = Visibility.Visible;
+            
+        }
+
+        public void ShowFosterFamilyAnimalsList(object sender, RoutedEventArgs e)
+        {
+            SearchAnimalFosterFamilies.Visibility = Visibility.Collapsed;
+            SearchFosterFamilyAnimals.Visibility = Visibility.Visible;
+
+            AnimalFosterFamilies_DataGrid.Visibility = Visibility.Collapsed;
+            FosterFamilyAnimals_DataGrid.Visibility = Visibility.Visible;
+            
+        }
+
+        public void SearchFosterFamiliesByAnimal(object sender, RoutedEventArgs e)
+        {
+            FosterFamilyViewModel vm = (FosterFamilyViewModel) this.DataContext;
+
+
+            try
+            {
+                vm.SearchFosterFamiliesByAnimal();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public void SearchFosterFamiliesByContact(object sender, RoutedEventArgs e)
+        {
+            FosterFamilyViewModel vm = (FosterFamilyViewModel)this.DataContext;
+
+
+            try
+            {
+                vm.SearchFosterFamiliesByContact();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /**
+         * <summary>
+         *  Recherche de la personne de contact  
+         * </summary>
+         * 
+         */
+        private void SearchContactButton_Click(object sender, RoutedEventArgs e)
+        {
+            AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
+
+            vm.SearchContact(ContactRegistryNumber_Textbox.Text);
+
+        }
+
+        /**
+         * <summary>
+         *  Recherche de la personne de contact  
+         * </summary>
+         * 
+         */
+        private void SearchAnimalButton_Click(object sender, RoutedEventArgs e)
+        {
+            AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
+
+            vm.SearchAnimal(AnimalSearchByName_Textbox.Text);
+
+        }
+
+        /**
+         * <summary>
+         *  Evénement click sur le bouton "Ajouter" qui permet d'ouvrir le formulaire d'ajout
+         *  d'un animal
+         * </summary>
+         */
+        private void EnableCreateFosterFamily(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Ouverture du formulaire
+                this.OpenForm();
+
+                // Nettoyage du formulaire
+                this.ClearForm();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /**
+         * <summary>
+         *  
+         * </summary>
+         */
+        private void SubmitButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            FosterFamilyViewModel vm = (FosterFamilyViewModel) this.DataContext;
+
+            
+            try
+            {
+                
+
+
+                // Créer l'animal
+                vm.CreateFosterFamily();
+
+                // vider les champs du formulaire
+                this.ClearForm();
+
+                // Fermer le Formulaire
+                this.CloseForm();
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erreur lors l'ajout d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
+                throw new Exception("Erreur lors l'ajout d'un animal.");
+            }
+
+        }
+
+        /**
+         * <summary>
+         *  Efface les valeurs contenues dans les formulaires  
+         * </summary>
+         * 
+         */
+        private void ClearForm()
+        {
+            FosterFamilyViewModel vm = (FosterFamilyViewModel)this.DataContext;
+
+
+
+            // Efface
+
+            // Ré-initialiser la recherche de la personne de contact
+            vm.ContactFound = null;
+
+        }
+
+        /**
+         * <summary>
+         *  Ouvre le formulaire et redimensionne les grilles (grid) et la liste des animaux
+         * </summary>
+         * 
+         */
+        private void OpenForm()
+        {
+            AnimalFosterFamilies_DataGrid.Height = 270;
+            FosterFamilyAnimals_DataGrid.Height = 270;
+
+            // Changement manuelle de la hauteur des grilles 
+            GridLengthConverter glConverter = new GridLengthConverter();
+            RowListFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("300px")!;
+            RowFormFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("600px")!;
+
+
+
+        }
+
+        /**
+         * <summary>
+         *  Ferme le formulaire, en diminuant le grille parent
+         * </summary>
+         */
+        private void CloseForm()
+        {
+            
+            AnimalFosterFamilies_DataGrid.Height = 550;
+            FosterFamilyAnimals_DataGrid.Height = 550;
+
+            // Changement manuelle de la hauteur des grilles 
+            GridLengthConverter glConverter = new GridLengthConverter();
+            RowListFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("600px")!;
+            RowFormFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("300px")!;
+
+        }
+
     }
 }

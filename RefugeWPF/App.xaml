@@ -12,12 +12,10 @@
              StartupUri="MainWindow.xaml"
 >
     <Application.Resources>
-        <!-- UI Libraries :  HandyControls -->
+        
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--  
-                <hc:ThemeResources />
-                -->
+                <!-- UI Libraries :  HandyControls -->
                 <hc:Theme  />
                 
 
@@ -54,7 +52,11 @@
             <FontFamily x:Key="FontAwesomeRegular" >/fonts/fontawesome7-free-regular-400.woff2#FontAwesomeRegular</FontFamily>
             <FontFamily x:Key="FontAwesomeSolid" >/fonts/fontawesome7-free-solid-900.woff2#FontAwesomeSolid</FontFamily>
 
-            <!-- Chargement du convertisseur AnimalColors to string Color.Name concatenation -->
+            <!-- Chargement des convertisseurs 
+                - AnimalColors to string Color.Name concatenation
+                - Address to string 
+                - ContactRoles to string Role.Name concatenation
+            -->
             <cvt:AnimalColorsToStringConverter x:Key="AnimalColorsToStringConverter" />
             <cvt:AddressToStringConverter x:Key="AddressToStringConverter" />
             <cvt:ContactRolesToStringConverter x:Key="ContactRolesToStringConverter" />

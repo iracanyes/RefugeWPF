@@ -248,11 +248,15 @@ namespace RefugeWPF.CoucheAccesDB
 
         }
 
-        
 
-        public HashSet<FosterFamily> GetFosterFamiliesForAnimal(Animal animal)
+        /**
+         * <summary>
+         *   Lister les familles d’accueil par où l’animal est passé
+         * </summary>
+         */
+        public List<FosterFamily> GetFosterFamiliesForAnimal(string name)
         {
-            HashSet<FosterFamily> result = new HashSet<FosterFamily>();
+            List<FosterFamily> result = new List<FosterFamily>();
             NpgsqlCommand? sqlCmd = null;
             NpgsqlDataReader? reader = null;
 
@@ -260,51 +264,16 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT ff."Id" AS "Id",
-                           ff."DateCreated" AS "DateCreated",
-                           ff."DateStart" AS "DateStart",
-                           ff."DateEnd" AS "DateEnd",
-                           ff."AnimalId" AS "AnimalId",
-                           ff."ContactId" AS "ContactId",
-                           a."Name" AS "Name",
-                           a."Type" AS "Type",
-                           a."Gender" AS "Gender",
-                           a."BirthDate" AS "BirthDate",
-                           a."DeathDate" AS "DeathDate",
-                           a."IsSterilized" AS "IsSterilized",
-                           a."DateSterilization" AS "DateSterilization",
-                           a."Particularity" AS "Particularity",
-                           a."Description" AS "Description",
-                           c."Firstname" AS "Firstname",
-                           c."Lastname" AS "Lastname",
-                           c."RegistryNumber" AS "RegistryNumber",
-                           c."Email" AS "Email",
-                           c."PhoneNumber" AS "PhoneNumber",
-                           c."MobileNumber" AS "MobileNumber",
-                           c."AddressId" AS "AddressId",
-                           add."Street" AS "Street",
-                           add."City" AS "City",
-                           add."State" AS "State",
-                           add."ZipCode" AS "ZipCode",
-                           add."Country" AS "Country"
-                    FROM public."FosterFamilies" ff
-                    INNER JOIN public."Animals" a
-                        ON ff."AnimalId" = a."Id"
-                    INNER JOIN public."Contacts" c
-                        ON ff."ContactId" = c."Id"
-                    INNER JOIN public."Addresses" add
-                        ON c."AddressId" = add."Id"
-                    WHERE ff."AnimalId" = :animalId
-                    ORDER BY ff."DateCreated" DESC
+                    SELECT * FROM get_foster_families_by_animal(:name)
                     """,
                     this.SqlConn
                 );
 
-                sqlCmd.Parameters.Add(new NpgsqlParameter("animalId", NpgsqlTypes.NpgsqlDbType.Varchar));
+                sqlCmd.Parameters.Add(new NpgsqlParameter("name", NpgsqlTypes.NpgsqlDbType.Varchar));
 
                 sqlCmd.Prepare();
 
-                sqlCmd.Parameters["animalId"].Value = animal.Id;
+                sqlCmd.Parameters["name"].Value = name;
 
                 reader = sqlCmd.ExecuteReader();
 
@@ -381,6 +350,104 @@ namespace RefugeWPF.CoucheAccesDB
                 else
                     throw new AccessDbException("GetFosterFamiliesForAnimal : sqlCmd is null", $"Error while listing past foster family for an animal. Error : {ex.Message}. Exception : {ex}");
 
+            }
+
+            return result;
+        }
+
+        public List<FosterFamily> GetFosterFamiliesForContact(string registryNumber) {
+            List<FosterFamily> result = new List<FosterFamily>();
+            NpgsqlCommand? sqlCmd = null;
+            NpgsqlDataReader? reader = null;
+
+            try
+            {
+                sqlCmd = new NpgsqlCommand(
+                    """
+                    SELECT * FROM get_foster_families_by_contact(:registryNumber);
+                    """,
+                    this.SqlConn
+                );
+
+                sqlCmd.Parameters.Add(new NpgsqlParameter("registryNumber", NpgsqlTypes.NpgsqlDbType.Varchar));
+
+                sqlCmd.Prepare();
+
+                sqlCmd.Parameters["registryNumber"].Value = registryNumber;
+
+                reader = sqlCmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    // Dates for foster family instance
+                    DateOnly dateStart = (DateOnly)reader["DateStart"];
+                    DateOnly? dateEnd = reader["DateEnd"] != DBNull.Value ? (DateOnly)reader["DateEnd"] : null;
+
+                    // Dates for animal's instance
+                    DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
+                    DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
+                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+
+                    //
+                    Animal animalInDb = new Animal(
+                        Convert.ToString(reader["AnimalId"])!,
+                        Convert.ToString(reader["Name"])!,
+                        MyEnumHelper.GetEnumFromDescription<AnimalType>(Convert.ToString(reader["Type"])!),
+                        MyEnumHelper.GetEnumFromDescription<GenderType>(Convert.ToString(reader["Gender"])!),
+                        birthDate,
+                        deathDate,
+                        Convert.ToBoolean(reader["IsSterilized"])!,
+                        dateSterilization,
+                        Convert.ToString(reader["Particularity"])!,
+                        Convert.ToString(reader["Description"])!
+
+                    );
+
+                    Address address = new Address(
+                        new Guid(Convert.ToString(reader["AddressId"])!),
+                        Convert.ToString(reader["Street"])!,
+                        Convert.ToString(reader["City"])!,
+                        Convert.ToString(reader["State"])!,
+                        Convert.ToString(reader["ZipCode"])!,
+                        Convert.ToString(reader["Country"])!
+                    );
+
+                    Contact contact = new Contact(
+                        new Guid(Convert.ToString(reader["ContactId"])!),
+                        Convert.ToString(reader["Firstname"])!,
+                        Convert.ToString(reader["Lastname"])!,
+                        Convert.ToString(reader["RegistryNumber"])!,
+                        Convert.ToString(reader["Email"])!,
+                        Convert.ToString(reader["PhoneNumber"])!,
+                        Convert.ToString(reader["MobileNumber"])!,
+                        address
+                    );
+
+
+
+                    result.Add(new FosterFamily(
+                        new Guid(Convert.ToString(reader["Id"])!),
+                        Convert.ToDateTime(reader["DateCreated"])!,
+                        dateStart,
+                        dateEnd,
+                        contact,
+                        animalInDb
+                    ));
+                }
+
+                
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                if(reader != null) { reader.Close(); }
+
+                Debug.WriteLine($"Erreur lors de la récupération des animaux par famille d'accueil.\nMessage : {ex.Message}.\nErreur : {ex}");
+
+                if (sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, $"Erreur lors de la récupération des animaux par famille d'accueil.\nMessage : {ex.Message}.\nErreur : {ex}");
+                else
+                    throw new AccessDbException("GetFosterFamiliesForAnimal : sqlCmd is null", $"Erreur lors de la récupération des animaux par famille d'accueil.\nMessage : {ex.Message}.\nErreur : {ex}");
             }
 
             return result;

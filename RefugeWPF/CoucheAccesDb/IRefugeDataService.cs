@@ -49,7 +49,14 @@ namespace RefugeWPF.CoucheAccesDB
          *  Lister les familles d'accueil par lesquelles un animal est passé
          * </summary>
          */
-        HashSet<FosterFamily> GetFosterFamiliesForAnimal(Animal animal);
+        List<FosterFamily> GetFosterFamiliesForAnimal(string name);
+
+        /**
+         * <summary>
+         *  Lister les animaux accueillis par une famille d'accueil
+         * </summary>
+         */
+        List<FosterFamily> GetFosterFamiliesForContact(string registryNumber);
 
         /**
          * <summary>

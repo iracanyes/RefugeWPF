@@ -119,15 +119,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 #### Custom
 docker/db/password.txt
 
-# EntityFramework.Tools 
-# Migrations
-**/Migrations
-**/*.sql
-
 
 # Jetbrains DataGrid
-/data
-**/*.sql
-**/queries
+data/queries
 
 

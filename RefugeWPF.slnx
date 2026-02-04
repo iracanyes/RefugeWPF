@@ -2,6 +2,9 @@
   <Folder Name="/Éléments de solution/">
     <File Path=".env" />
     <File Path=".gitignore" />
+    <File Path="data/procedure_stockee_animals.sql" />
+    <File Path="data/procedure_stockee_contacts.sql" />
+    <File Path="data/procedure_stockee_refuge.sql" />
     <File Path="docker-compose.yml" />
   </Folder>
   <Project Path="RefugeWPF/RefugeWPF.csproj" />

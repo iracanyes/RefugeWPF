@@ -547,8 +547,8 @@ namespace RefugeWPF.CoucheAccesDB
             }
             catch (Exception ex)
             {
-
-                throw;
+                Debug.WriteLine($"Erreur lors la mise à jour d'un contact.\nMessage : {ex.Message}.\nErreur : {ex} ");
+                throw new AccessDbException("HandleUpdateContact", ex.Message);
             }
 
             return result;

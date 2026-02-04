@@ -34,7 +34,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
         /**
          * <summary>
-         *  
+         *  Titre de la page
          * </summary>
          */
         public string Title
