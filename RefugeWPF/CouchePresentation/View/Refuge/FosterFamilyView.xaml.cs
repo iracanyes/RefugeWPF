@@ -90,9 +90,17 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void SearchContactButton_Click(object sender, RoutedEventArgs e)
         {
-            AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
+            FosterFamilyViewModel vm = (FosterFamilyViewModel)this.DataContext;
 
-            vm.SearchContact(ContactRegistryNumber_Textbox.Text);
+            try
+            {
+                vm.SearchContact();
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            
 
         }
 
@@ -104,9 +112,17 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void SearchAnimalButton_Click(object sender, RoutedEventArgs e)
         {
-            AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
+            FosterFamilyViewModel vm = (FosterFamilyViewModel)this.DataContext;
 
-            vm.SearchAnimal(AnimalSearchByName_Textbox.Text);
+            
+            try
+            {
+                vm.SearchAnimal();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
         }
 
@@ -181,10 +197,19 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
 
 
 
-            // Efface
+            // Ré-initiliaser les champs de date de début et fin de l'accueil
+            vm.DateStart = DateTime.Now;
+            vm.DateEnd = null;
+
 
             // Ré-initialiser la recherche de la personne de contact
+            vm.FormContactRegistryNumber = "";
             vm.ContactFound = null;
+
+            // Ré-initialiser la recherche de l'animal
+            vm.FormAnimalName = "";
+            vm.AnimalFound = null;
+            vm.AnimalsFound.Clear();
 
         }
 
@@ -201,8 +226,8 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
 
             // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();
-            RowListFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("300px")!;
-            RowFormFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("600px")!;
+            RowListFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("280px")!;
+            RowFormFosterFamilies.Height = (GridLength)glConverter.ConvertFrom("720px")!;
 
 
 

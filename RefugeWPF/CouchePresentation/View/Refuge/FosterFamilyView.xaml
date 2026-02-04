@@ -140,9 +140,9 @@
         >
 
             <Grid.RowDefinitions>
-                <RowDefinition Name="RowListFosterFamilies" MaxHeight="500px"/>
+                <RowDefinition Name="RowListFosterFamilies" MaxHeight="400px"/>
                 <RowDefinition Height="50px"/>
-                <RowDefinition Name="RowFormFosterFamilies" Height="300px"/>
+                <RowDefinition Name="RowFormFosterFamilies" Height="400px"/>
             </Grid.RowDefinitions>
 
             <!--========== Liste des familles d'accueil =========================================================-->
@@ -165,7 +165,14 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated}" Width="120" />
                         <DataGridTextColumn Header="Début de l'accueil" Binding="{Binding DateStart}" Width="150"/>
-                        <DataGridTextColumn Header="Fin de l'accueil" Binding="{Binding DateEnd}" Width="150"/>
+                        <DataGridTextColumn Header="Fin de l'accueil" Binding="{Binding DateEnd}" Width="150"/>                        
+                        <DataGridTextColumn Header="Nom de l'accueillant" Binding="{Binding Contact.Firstname}" Width="120" />
+                        <DataGridTextColumn Header="Prénom de l'accueillant" Binding="{Binding Contact.Lastname}" Width="120" />
+                        <DataGridTextColumn Header="N° Registre national" Binding="{Binding Contact.RegistryNumber}" Width="120" />
+                        <DataGridTextColumn Header="Rmail" Binding="{Binding Contact.Email}" Width="120" />
+                        <DataGridTextColumn Header="N° téléphone fixe" Binding="{Binding Contact.PhoneNumber}" Width="120" />
+                        <DataGridTextColumn Header="N° de portable" Binding="{Binding Contact.MobileNumber}" Width="120" />
+
                         <DataGridTextColumn Header="Nom" Binding="{Binding Animal.Name}" Width="150"/>
                         <DataGridTextColumn Header="Type" Binding="{Binding Animal.Type}" Width="80"/>
                         <DataGridTextColumn Header="Genre" Binding="{Binding Animal.Gender}" Width="50"/>
@@ -176,10 +183,6 @@
                         <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization}" />
                         <DataGridTextColumn Header="Particularité" Binding="{Binding Animal.Particularity}"  Width="180"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Animal.Description}" Width="180"/>
-                        <DataGridTextColumn Header="Nom de l'accueillant" Binding="{Binding Contact.Firstname}" Width="120" />
-                        <DataGridTextColumn Header="Prénom de l'accueillant" Binding="{Binding Contact.Lastname}" Width="120" />
-                        <DataGridTextColumn Header="N° Registre national" Binding="{Binding Contact.RegistryNumber}" Width="120" />
-
 
                     </DataGrid.Columns>
                 </DataGrid>
@@ -256,7 +259,7 @@
 
                 <TextBlock 
                     Text="{Binding TitleForm}"
-                    Margin="0,10,0,5"
+                    Margin="0,5,0,5"
                     HorizontalAlignment="Center"
                     Padding="5"
                     FontSize="16"
@@ -268,7 +271,7 @@
                 <ScrollViewer 
                     VerticalScrollBarVisibility="Visible"
                     Margin="10,0,0,0"
-                    Height="310"
+                    Height="290"
                 >
                     <StackPanel
                         Orientation="Vertical"    
@@ -352,25 +355,26 @@
                                 <TextBox 
                                     Name="ContactRegistryNumber_Textbox"
                                     Width="250"
+                                    Text="{Binding FormContactRegistryNumber, UpdateSourceTrigger=PropertyChanged}"
                                 />
 
                                 <Button
-                                Margin="10,5"
-                                Background="BlueViolet"
-                                Foreground="White"
-                                FontSize="12"
-                                Content="Rechercher"
-                                Click="SearchContactButton_Click"
-                            ></Button>
+                                    Margin="10,5"
+                                    Background="BlueViolet"
+                                    Foreground="White"
+                                    FontSize="12"
+                                    Content="Rechercher"
+                                    Click="SearchContactButton_Click"
+                                ></Button>
 
                                 <!-- Affichage du résultat de la recherche de la personne de contact -->
                                 <TextBlock 
-                                Name="ContactFullnameDisplay"
-                                FontFamily="Segoe UI"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                VerticalAlignment="Center"
-                            >
+                                    Name="ContactFullnameDisplay"
+                                    FontFamily="Segoe UI"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    VerticalAlignment="Center"
+                                >
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="Personne de contact :  {0} {1}">
                                             <Binding Path="ContactFound.Firstname" />
@@ -399,20 +403,8 @@
                                     Name="FormSearchAnimalSection"
                                     Margin="0,5"
                                 >
-                                    <!-- Changement dynamique de l'affichage de la section  => Affiche le panneau si l'animal est pas déjà enregistré -->
-                                    <!--
-                                    <StackPanel.Style>
-                                        <Style TargetType="StackPanel">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding AnimalAlreadyRegistered}" Value="true">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </StackPanel.Style>
-                                    -->
-
+                                    <!-- Formulaire recherche - animal par nom -->
+                                                                        
                                     <StackPanel
                                         Orientation="Horizontal"                                    
                                     >
@@ -427,6 +419,7 @@
                                         <TextBox 
                                             Name="AnimalSearchByName_Textbox"
                                             Width="250"
+                                            Text="{Binding FormAnimalName, UpdateSourceTrigger=PropertyChanged}"
                                         />
 
                                         <Button
@@ -443,7 +436,7 @@
                                     <StackPanel>
                                         <DataGrid
                                         Name="AnimalsFound_DataGrid"
-                                        ItemsSource="{Binding AnimalsFound}"
+                                        ItemsSource="{Binding AnimalsFound, UpdateSourceTrigger=PropertyChanged}"
                                         SelectedItem="{Binding AnimalFound, UpdateSourceTrigger=PropertyChanged}"
                                         IsReadOnly="True"
                                         AutoGenerateColumns="False"
@@ -453,7 +446,7 @@
                                                 <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="80"/>
                                                 <DataGridTextColumn Header="Genre" Binding="{Binding Gender}" Width="50"/>
                                                 <DataGridTextColumn Header="Couleurs" Binding="{Binding AnimalColors, Converter={StaticResource AnimalColorsToStringConverter}}" />
-                                                <DataGridTextColumn Header="Date de naissance" Binding="{Binding BirthDate}" Width="120" />
+                                                <DataGridTextColumn Header="Date de naissance" Binding="{Binding BirthDate}" />
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </StackPanel>
@@ -477,13 +470,13 @@
                 </ScrollViewer>
                 <!-- Formulaire - Bouton d'action -->
                 <StackPanel
-                HorizontalAlignment="Center"    
-            >
-                    <Button
-                    Margin="0,5" 
-                    Background="GreenYellow"
-                    Click="SubmitButton_Click"
+                    HorizontalAlignment="Center"    
                 >
+                    <Button
+                        Margin="0,5" 
+                        Background="GreenYellow"
+                        Click="SubmitButton_Click"
+                    >
                         Confirmer
                     </Button>
                 </StackPanel>

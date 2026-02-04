@@ -27,20 +27,20 @@
 
         <!--==== Barre de recherche =============================================-->
         <StackPanel 
-        x:Name="SearchAnimalForm"
-        Grid.Row="1"
-        Orientation="Horizontal"
-        Height="50" 
-        Background="BlueViolet" 
-    >
+            x:Name="SearchAnimalForm"
+            Grid.Row="1"
+            Orientation="Horizontal"
+            Height="50" 
+            Background="BlueViolet" 
+        >
             <TextBlock 
-            Text="Nom de l'animal" 
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Margin="10,0"
-            FontSize="14"
-            FontWeight="Bold"
-        />
+                Text="Nom de l'animal" 
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="10,0"
+                FontSize="14"
+                FontWeight="Bold"
+            />
 
             <TextBox 
             Width="200"

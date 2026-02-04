@@ -272,14 +272,14 @@ namespace RefugeWPF.CouchePresentation.ViewModel
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors de la recherche de la personne de contact. Message: {ex.Message}. Erreur {ex}");
-                throw;
+                MessageBox.Show($"Erreur lors de la recherche de la personne de contact.\nMessage: {ex.Message}.\nErreur {ex}");
             }
 
         }
 
         /**
          * <summary>
-         *  
+         *  Ajouter un animal
          * </summary>
          */
         internal void CreateAdmission(Animal animal)

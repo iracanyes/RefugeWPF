@@ -9,8 +9,8 @@ namespace RefugeWPF.CoucheMetiers.Model.Entities
 {
     internal class FosterFamily
     {
-        public FosterFamily(DateTime dateCreated, DateOnly dateStart, DateOnly? dateEnd, Contact contact, Animal animal)
-            : this(Guid.NewGuid(), dateCreated, dateStart, dateEnd, contact, animal)
+        public FosterFamily(DateOnly dateStart, DateOnly? dateEnd, Contact contact, Animal animal)
+            : this(Guid.NewGuid(), DateTime.Now, dateStart, dateEnd, contact, animal)
         {
         }
 
