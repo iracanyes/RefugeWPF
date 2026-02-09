@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 
 namespace RefugeWPF.CouchePresentation.View.Refuge
 {
@@ -39,8 +40,24 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         private void SearchContactButton_Click(object sender, RoutedEventArgs e)
         {
             AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
+            Regex regex = new Regex("^(\\d{2})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2]\\d|3[0-1])-(\\d{3})\\.(\\d{2})$");
 
-            vm.SearchContact(ContactRegistryNumber_Textbox.Text);
+            if (!regex.IsMatch(ContactRegistryNumber_Textbox.Text))
+            {
+                MessageBox.Show("Le numéro de registre national doit être au format yy.mm.dd-999,99");
+                return;
+            }
+
+
+            try
+            {
+                vm.SearchContact(ContactRegistryNumber_Textbox.Text);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
 
         }
 
@@ -53,8 +70,16 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         private void SearchAnimalButton_Click(object sender, RoutedEventArgs e)
         {
             AdmissionViewModel vm = (AdmissionViewModel)this.DataContext;
+            
+            try
+            {
+                vm.SearchAnimal(AnimalSearchByName_Textbox.Text);
+            }
+            catch (Exception ex)
+            {
 
-            vm.SearchAnimal(AnimalSearchByName_Textbox.Text);
+                MessageBox.Show(ex.Message);
+            }
 
         }
 
@@ -98,15 +123,17 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         {
             RefugeWPF.CoucheMetiers.Model.Entities.Animal? animal = null;
             AdmissionViewModel vm = (AdmissionViewModel) this.DataContext;
+            string reason = (string) AdmissionReason_ComboBox.SelectedItem;
 
-            if((string) AdmissionReason_ComboBox.SelectedItem == "inconnu")
+            if (reason == "inconnu")
             {
                 MessageBox.Show("Sélectionner une raison d'admission");
+                return;
             }
 
             try
             {
-                string reason = (string) AdmissionReason_ComboBox.SelectedItem;
+                
                 if(reason == MyEnumHelper.GetEnumDescription<AdmissionType>(AdmissionType.ReturnFosterFamily)
                     || reason == MyEnumHelper.GetEnumDescription<AdmissionType>(AdmissionType.ReturnAdoption))
                 {
@@ -137,11 +164,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
                     {
                         vm.SelectedAnimalColors.Add(c);
                     }
-                }
-                
-
-                
-                
+                }         
 
 
                 // Créer l'animal
@@ -158,7 +181,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors l'ajout d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
-                throw new Exception("Erreur lors l'ajout d'un animal.");
+                MessageBox.Show("Erreur lors l'ajout d'un animal.\nMessage : {ex.Message}");
             }
 
         }
@@ -166,8 +189,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         /**
          * <summary>
          *  Evénement Click sur le bouton "Ajouter" du formulaire de compatibilité pour l'animal.
-         *  La compatibilité, sa valeur et sa description seront stockés dans une collection temporaire.
-         *  
+         *  Les compatibilités, leurs valeurs et descriptions seront stockés dans une collection temporaire.         *  
          * </summary>
          */
         private void AddAnimalCompatibility(object sender, RoutedEventArgs e)
@@ -232,9 +254,16 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
             // Vider la collection des couleurs de l'animal
             vm.SelectedAnimalColors.Clear();
 
+            // Ré-initialiser la raison d'admission
+            vm.SelectedAdmissionReason = "";
+
             // Ré-initialiser la recherche de la personne de contact
             ContactRegistryNumber_Textbox.Text = "";
             vm.ContactFound = null;
+
+            // Ré-initialiser la recherche de l'animal
+            AnimalSearchByName_Textbox.Text = "";
+            vm.AnimalFound = null;
 
         }
 
@@ -273,13 +302,12 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void OpenForm()
         {
-            Admissions_DataGrid.Height = 270;
+            Admissions_DataGrid.Height = 250;
 
             // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();
             RowListAdmission.Height = (GridLength)glConverter.ConvertFrom("300px")!;
             RowFormAdmission.Height = (GridLength)glConverter.ConvertFrom("600px")!;
-
 
 
         }
@@ -291,12 +319,12 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void CloseForm()
         {
-            Admissions_DataGrid.Height = 550;
+            Admissions_DataGrid.Height = 280;
             
             // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();
-            RowListAdmission.Height = (GridLength)glConverter.ConvertFrom("600px")!;
-            RowFormAdmission.Height = (GridLength)glConverter.ConvertFrom("300px")!;
+            RowListAdmission.Height = (GridLength)glConverter.ConvertFrom("400px")!;
+            RowFormAdmission.Height = (GridLength)glConverter.ConvertFrom("400px")!;
 
         }
 

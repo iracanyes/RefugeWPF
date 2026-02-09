@@ -47,7 +47,7 @@
             />
 
             <Button 
-                Content="Recherche"
+                Content="Valider"
                 Margin="10,0"
                 FontWeight="SemiBold"
                 FontSize="12"
@@ -89,7 +89,7 @@
                 <DataGrid
                     Name="Contacts_DataGrid"
                     Margin="5"
-                    Height="400"
+                    Height="380"
                     Width="1090"
                     HorizontalAlignment="Center"
                     IsReadOnly="True"
@@ -214,19 +214,7 @@
                                     Name="FormContactSection"
                                     Orientation="Horizontal"    
                                 >
-                                    <!-- Changement dynamique de l'affichage de la section  => Affiche le panneau si l'animal n'est pas déjà enregistré -->
-                                    <!--
-                                    <StackPanel.Style>
-                                        <Style TargetType="StackPanel">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding AnimalAlreadyRegistered}" Value="false">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </StackPanel.Style>
-                                    -->
+                                   
                                     
                                     <!-- Formulaire contact - nom, prénom, numéro de registre national -->
                                     <StackPanel
@@ -251,6 +239,7 @@
                                             <TextBox 
                                                 Name="ContactRegistryNumber_TextBox"
                                                 Width="250"
+                                                MaxLength="15"
                                                 Text="{Binding RegistryNumber, UpdateSourceTrigger=PropertyChanged}"
                                             />
                                         </StackPanel>

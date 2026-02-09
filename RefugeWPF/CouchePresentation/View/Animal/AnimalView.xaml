@@ -92,6 +92,7 @@
                 <!-- Liste des animaux -->
                 <DataGrid
                     Name="Animals_DataGrid"
+                    Height="380"
                     Margin="5"
                     HorizontalAlignment="Center"
                     IsReadOnly="True"

@@ -18,6 +18,11 @@ namespace RefugeWPF.CoucheAccesDB
             : base()
         { }
 
+        /**
+         * <summary>
+         *  Ajouter une adresse
+         * </summary>
+         */
         public bool CreateAddress(Address address, NpgsqlTransaction? transaction = null)
         {
             bool result = false;
@@ -27,8 +32,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """"
-                    INSERT INTO public."Addresses" ("Id", "Street", "City", "State", "ZipCode", "Country")
-                    VALUES (:id, :street, :city, :state, :zipCode, :country)
+                    SELECT * FROM create_address(:id, :street, :city, :state, :zipCode, :country);
                     """",
                     this.SqlConn
 
@@ -68,6 +72,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Ajouter un rôle à une personne de contact
+         * </summary>
+         */
         public bool CreateContactRole(ContactRole contactRole, NpgsqlTransaction transaction)
         {
             bool result = false;
@@ -77,8 +86,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    INSERT INTO public."ContactRoles" ("Id", "ContactId", "RoleId")
-                    VALUES (:id, :contactId, :roleId)
+                    SELECT * FROM create_contact_role(:id, :contactId, :roleId);
                     """,
                     this.SqlConn,
                     transaction
@@ -119,7 +127,12 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
             
         }
-        
+
+        /**
+         * <summary>
+         *  Gère l'ajout d'une personne de contact
+         * </summary>
+         */
         public Contact HandleCreateContact(Contact contact)
         {
             NpgsqlTransaction transaction = this.SqlConn.BeginTransaction();
@@ -151,6 +164,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Ajoute une personne de contact
+         * </summary>
+         */
         public Contact CreateContact(Contact contact, NpgsqlTransaction? transaction)
         {
             Contact? result = null;
@@ -162,8 +180,7 @@ namespace RefugeWPF.CoucheAccesDB
 
                 sqlCmd = new NpgsqlCommand(
                     """
-                    INSERT INTO public."Contacts" ("Id", "Firstname", "Lastname", "RegistryNumber", "Email", "PhoneNumber", "MobileNumber", "AddressId")
-                    VALUES (:id, :firstname, :lastname, :registryNumber, :email, :phoneNumber, :mobileNumber, :addressId)
+                    SELECT * FROM create_contact(:id, :firstname, :lastname, :registryNumber, :email, :phoneNumber, :mobileNumber, :addressId);
                     """,
                     this.SqlConn,
                     transaction
@@ -219,6 +236,11 @@ namespace RefugeWPF.CoucheAccesDB
 
         }
 
+        /**
+         * <summary>
+         *  Récupére la liste des personnes de contact
+         * </summary>
+         */
         public List<Contact> GetContacts()
         {
             List<Contact> result = new List<Contact>();
@@ -229,22 +251,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    SELECT c."Id" AS "Id",
-                           c."Firstname" AS "Firstname",
-                           c."Lastname" AS "Lastname",
-                           c."RegistryNumber" AS "RegistryNumber",
-                           c."Email" AS "Email",
-                           c."MobileNumber" AS "MobileNumber",
-                           c."PhoneNumber" AS "PhoneNumber",
-                           a."Id" AS "AddressId",
-                           a."Street" AS "Street",
-                           a."City" AS "City",
-                           a."State" AS "State" ,
-                           a."ZipCode" AS "ZipCode",
-                           a."Country" AS "Country" 
-                    FROM public."Contacts" c
-                    INNER JOIN public."Addresses" a
-                        ON c."AddressId" = a."Id"
+                    SELECT * FROM get_contacts();
                     """,
                     this.SqlConn
                 );
@@ -303,6 +310,82 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Récupérer une personne de contact par son identifiant
+         * </summary>
+         */
+        public Contact GetContactById(Guid id)
+        {
+            Contact? result = null;
+            NpgsqlCommand? sqlCmd = null;
+            NpgsqlDataReader? reader = null;
+
+            try
+            {
+                sqlCmd = new NpgsqlCommand(
+                    $"""
+                    SELECT * FROM get_contact_by_id(:id);
+                    """,
+                    this.SqlConn
+                );
+
+                sqlCmd.Parameters.Add(new NpgsqlParameter("id", NpgsqlTypes.NpgsqlDbType.Uuid));
+
+                sqlCmd.Prepare();
+
+                sqlCmd.Parameters["id"].Value = id;
+
+                reader = sqlCmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+
+                    Address address = new Address(
+                        new Guid(Convert.ToString(reader["Id"])!),
+                        Convert.ToString(reader["Street"])!,
+                        Convert.ToString(reader["City"])!,
+                        Convert.ToString(reader["State"])!,
+                        Convert.ToString(reader["ZipCode"])!,
+                        Convert.ToString(reader["Country"])!
+                    );
+
+                    result = new Contact(
+                        new Guid(Convert.ToString(reader["ContactId"])!),
+                        Convert.ToString(reader["Fistname"])!,
+                        Convert.ToString(reader["Lastname"])!,
+                        Convert.ToString(reader["RegistryNumber"])!,
+                        Convert.ToString(reader["Email"])!,
+                        Convert.ToString(reader["PhoneNumber"])!,
+                        Convert.ToString(reader["MobileNumber"])!,
+                        address
+                    );
+                }
+
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+
+                Debug.WriteLine($"Unable to retrieve a contact instance with ID : {id}.\nReason :\n{ex.Message}\nException : \n{ex}");
+
+                if (sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, ex.Message);
+                else
+                    throw new AccessDbException($"Unable to retrieve a contact instance with ID : {id}.", ex.Message);
+            }
+
+            if (result == null) throw new Exception($"Unable to retrieve a contact instance with ID: {id}");
+
+            return result;
+
+        }
+
+        /**
+         * <summary>
+         *  Récupérer une personne de contact par son numéro de registre national
+         * </summary>
+         */
         public Contact GetContactByRegistryNumber(string registryNumber)
         {
             Contact? result = null;
@@ -313,23 +396,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    SELECT c."Id" AS "Id",
-                           c."Firstname" AS "Firstname",
-                           c."Lastname" AS "Lastname",
-                           c."RegistryNumber" AS "RegistryNumber",
-                           c."Email" AS "Email",
-                           c."MobileNumber" AS "MobileNumber",
-                           c."PhoneNumber" AS "PhoneNumber",
-                           a."Id" AS "AddressId",
-                           a."Street" AS "Street",
-                           a."City" AS "City",
-                           a."State" AS "State" ,
-                           a."ZipCode" AS "ZipCode",
-                           a."Country" AS "Country" 
-                    FROM public."Contacts" c
-                    INNER JOIN public."Addresses" a
-                        ON c."AddressId" = a."Id"
-                    WHERE c."RegistryNumber" = :registryNumber
+                    SELECT * FROM get_contact_by_registry_number(:registryNumber);
                     """,
                     this.SqlConn
                 );
@@ -392,7 +459,11 @@ namespace RefugeWPF.CoucheAccesDB
         }
 
 
-
+        /**
+         * <summary>
+         *  Mettre à jour une adresse
+         * </summary>
+         */
         public bool UpdateAddress(Address address, NpgsqlTransaction? transaction = null)
         {
             bool result = false;
@@ -402,13 +473,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    UPDATE public."Addresses"
-                    SET "Street" = :street,
-                        "City" = :city,
-                        "State" = :state,
-                        "ZipCode" = :zipCode,
-                        "Country" = :country
-                    WHERE "Id" = :id
+                    SELECT * FROM update_address(:id, :street, :city,  :state, :zipCode, :country);
                     """,
                     this.SqlConn,
                     transaction
@@ -425,7 +490,7 @@ namespace RefugeWPF.CoucheAccesDB
 
                 sqlCmd.Parameters["id"].Value = address.Id;
                 sqlCmd.Parameters["street"].Value = address.Street;
-                sqlCmd.Parameters["city"].Value = address.Country;
+                sqlCmd.Parameters["city"].Value = address.City;
                 sqlCmd.Parameters["state"].Value = address.State;
                 sqlCmd.Parameters["zipCode"].Value = address.ZipCode;
                 sqlCmd.Parameters["country"].Value = address.Country;
@@ -455,6 +520,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Mettre à jour une personne de contact
+         * </summary>
+         */
         public Contact UpdateContact(Contact contact, NpgsqlTransaction? transaction = null) {
             Contact? result = null;
             NpgsqlCommand? sqlCmd = null;
@@ -465,15 +535,7 @@ namespace RefugeWPF.CoucheAccesDB
 
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    UPDATE public."Contacts" c
-                    SET "Firstname" = :firstname,
-                        "Lastname" = :lastname,
-                        "RegistryNumber" = :registryNumber,
-                        "Email" = :email,
-                        "PhoneNumber" = :phoneNumber,
-                        "MobileNumber" = :mobileNumber,
-                        "AddressId" = :addressId
-                    WHERE "Id" = :id
+                    SELECT * FROM update_contact(:id, :firstname, :lastname, :registryNumber, :email, :phoneNumber, :mobileNumber, :addressId);
                     """,
                     this.SqlConn,
                     transaction
@@ -530,6 +592,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Gère la mise à jour d'une personne de contact
+         * </summary>
+         */
         public Contact HandleUpdateContact(Contact contact)
         {
             Contact? result = null;
@@ -555,6 +622,11 @@ namespace RefugeWPF.CoucheAccesDB
 
         }
 
+        /**
+         * <summary>
+         *  Supprimer un rôle d'une personne de contact
+         * </summary>
+         */
         public bool DeleteContactRole(ContactRole contactRole, NpgsqlTransaction? transaction = null)
         {
             bool result = false;
@@ -564,8 +636,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    DELETE FROM public."ContactRoles"
-                    WHERE "Id" = :id
+                    SELECT * FROM delete_contact_role(:id);
                     """,
                     this.SqlConn,
                     transaction
@@ -598,6 +669,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Supprimer une personne de contact
+         * </summary>
+         */
         public bool DeleteContact(Contact contact)
         {
             bool result = false;
@@ -613,8 +689,7 @@ namespace RefugeWPF.CoucheAccesDB
 
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    DELETE FROM public."Contacts"
-                    WHERE "Id" = :id
+                    SELECT * FROM delete_contact(:id);
                     """,
                     this.SqlConn, 
                     transaction
@@ -651,90 +726,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
-
-        
-
-        public Contact GetContactById(Guid id)
-        {
-            Contact? result = null;
-            NpgsqlCommand? sqlCmd = null;
-            NpgsqlDataReader? reader = null;
-
-            try
-            {
-                sqlCmd = new NpgsqlCommand(
-                    $"""
-                    SELECT c."Id" AS "Id"
-                           c."Firstname" AS "Firstname",
-                           c."Lastname" AS "Lastname",
-                           c."RegistryNumber" AS "RegistryNumber",
-                           c."Email" AS "Email",
-                           c."MobileNumber" AS "MobileNumber",
-                           c."PhoneNumber" AS "PhoneNumber",
-                           a."Street" AS "Street",
-                           a."City" AS "City",
-                           a."State" AS "State" ,
-                           a."ZipCode" AS "ZipCode",
-                           a."Country" AS "Country", 
-                    FROM public."Contacts" c
-                    INNER JOIN public."Addresses" a
-                        ON c."AddressId" = a."Id"
-                    WHERE c."Id" = :id
-                    """,
-                    this.SqlConn
-                );
-
-                sqlCmd.Parameters.Add(new NpgsqlParameter("id", NpgsqlTypes.NpgsqlDbType.Uuid));
-
-                sqlCmd.Prepare();
-
-                sqlCmd.Parameters["id"].Value = id;
-
-                reader = sqlCmd.ExecuteReader();
-
-                if (reader.Read())
-                {
-
-                    Address address = new Address(
-                        new Guid(Convert.ToString(reader["Id"])!),
-                        Convert.ToString(reader["Street"])!,
-                        Convert.ToString(reader["City"])!,
-                        Convert.ToString(reader["State"])!,
-                        Convert.ToString(reader["ZipCode"])!,
-                        Convert.ToString(reader["Country"])!
-                    );
-                    
-                    result = new Contact(
-                        new Guid(Convert.ToString(reader["ContactId"])!),
-                        Convert.ToString(reader["Fistname"])!,
-                        Convert.ToString(reader["Lastname"])!,
-                        Convert.ToString(reader["RegistryNumber"])!,
-                        Convert.ToString(reader["Email"])!,
-                        Convert.ToString(reader["PhoneNumber"])!,
-                        Convert.ToString(reader["MobileNumber"])!,
-                        address
-                    );
-                }
-
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-
-                Debug.WriteLine($"Unable to retrieve a contact instance with ID : {id}.\nReason :\n{ex.Message}\nException : \n{ex}");
-
-                if (sqlCmd != null)
-                    throw new AccessDbException(sqlCmd.CommandText, ex.Message);
-                else
-                    throw new AccessDbException($"Unable to retrieve a contact instance with ID : {id}.", ex.Message);
-            }
-
-            if (result == null) throw new Exception($"Unable to retrieve a contact instance with ID: {id}");
-
-            return result;
-
-        }
-
+        /**
+         * <summary>
+         *  Récupérer la liste des rôles
+         * </summary>
+         */
         public HashSet<Role> GetRoles()
         {
             HashSet<Role> roles = new HashSet<Role>();
@@ -745,8 +741,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT *
-                    FROM public."Roles"
+                    SELECT * FROM get_roles();
                     """,
                     this.SqlConn
                 );
@@ -784,7 +779,11 @@ namespace RefugeWPF.CoucheAccesDB
 
         }
 
-
+        /**
+         * <summary>
+         *  Récupérer la liste des rôles d'une personne de contact
+         * </summary>
+         */
         public HashSet<ContactRole> GetContactRoles(Contact contact) { 
             NpgsqlCommand? sqlCmd = null;
             NpgsqlDataReader? reader = null;
@@ -793,14 +792,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT cr."Id" AS "Id",
-                            cr."ContactId" AS "ContactId",
-                            cr."RoleId" AS "RoleId",
-                            r."Name" AS "RoleName"
-                    FROM public."ContactRoles" cr
-                    INNER JOIN public."Roles" r
-                        ON cr."RoleId" = r."Id"
-                    WHERE cr."ContactId" = :contactId                
+                    SELECT * FROM get_contact_roles(:contactId);                
                     """,
                     this.SqlConn
                 );
@@ -842,8 +834,9 @@ namespace RefugeWPF.CoucheAccesDB
         }
 
         /**
-         * 
-         * 
+         * <summary>
+         *  Vérifie si un numéro de registre national existe
+         * </summary>
          */
         public bool RegistryNumberExists(string registryNumber)
         {
@@ -875,7 +868,7 @@ namespace RefugeWPF.CoucheAccesDB
 
                 if (reader.Read())
                 {
-                    result = Convert.ToBoolean(reader["exists"]);
+                    result = Convert.ToBoolean(reader["myExists"]);
                 }
 
                 // Close reader 

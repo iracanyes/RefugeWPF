@@ -1,24 +1,14 @@
 ﻿
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RefugeWPF.CoucheMetiers.Helper;
 using RefugeWPF.CoucheMetiers.Model.Entities;
 using RefugeWPF.CoucheMetiers.Model.Enums;
 using RefugeWPF.CoucheMetiers.Model.DTO;
 using RefugeWPF.CouchePresentation.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Text;
 
 namespace RefugeWPF.CouchePresentation.View.Animal
 {
@@ -182,6 +172,35 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             
         }
 
+        private bool CheckConstraints()
+        {
+            AnimalViewModel vm = (AnimalViewModel)this.DataContext;
+            DateTime? birthDate = AnimalBirthDate.SelectedDate;
+            DateTime? deathDate = AnimalDeathDate.SelectedDate;
+            DateTime? dateSterilization = AnimalDateSterilization.SelectedDate;
+            bool isSterilized = AnimalIsSterilized.IsChecked != null ? (bool) AnimalIsSterilized.IsChecked : false ;
+
+            StringBuilder sb = new StringBuilder();
+
+            if (birthDate != null && deathDate != null && birthDate > deathDate)
+                sb.Append("La date de décès : Doit être supérieur à la date de naissance.\n");
+
+            if (birthDate != null && dateSterilization != null && birthDate >= dateSterilization)
+                sb.Append("La date de stérilisation : Doit être supérieur à la date de naissance.\n");
+
+            if (!isSterilized && dateSterilization != null)
+                sb.Append("Si l’animal n’est pas stérilisé alors la date de stérilisation est nulle.\n");
+
+            string errorMessage = sb.ToString();
+            if(errorMessage.Length > 0)
+            {
+                MessageBox.Show(errorMessage);
+                return false;
+            }
+
+            return true;
+        }
+
         /**
          * <summary>
          *  Evénement "Click" sur le bouton de soummission du formulaire pour la mise à jour de l'animal
@@ -191,6 +210,9 @@ namespace RefugeWPF.CouchePresentation.View.Animal
         {
             RefugeWPF.CoucheMetiers.Model.Entities.Animal? animal = null;
             AnimalViewModel vm = (AnimalViewModel)this.DataContext;
+
+            if (!this.CheckConstraints())
+                return;
 
             try
             {
@@ -274,20 +296,26 @@ namespace RefugeWPF.CouchePresentation.View.Animal
                 return;
             }
 
-            AnimalCompatibilityDTO ac = new AnimalCompatibilityDTO(
-                (Compatibility) AnimalCompatibilitySelection.SelectedItem,
-                AnimalId.Text,
-                AnimalCompatibilityValue.IsChecked,
-                AnimalCompatibilityDescription.Text
-            );
+            try
+            {
+                AnimalCompatibilityDTO ac = new AnimalCompatibilityDTO(
+                    (Compatibility)AnimalCompatibilitySelection.SelectedItem,
+                    AnimalId.Text,
+                    AnimalCompatibilityValue.IsChecked,
+                    AnimalCompatibilityDescription.Text
+                );
 
-            // On stocke la compatibilité pour l'animal
-            vm.AddedAnimalCompatibilities.Add(ac);
+                // On stocke la compatibilité pour l'animal
+                vm.AddedAnimalCompatibilities.Add(ac);
 
-            // Effacer les valeurs contenues dans le formulaire de compatibilité pour l'animal
-            this.ClearFormAnimalCompatibility();
-
-
+                // Effacer les valeurs contenues dans le formulaire de compatibilité pour l'animal
+                this.ClearFormAnimalCompatibility();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"");
+                MessageBox.Show("Erreur lors de l'ajout de la compatibilité pour l'animal.");
+            }          
 
 
         }
@@ -361,7 +389,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
          */ 
         private void OpenForm()
         {
-            Animals_DataGrid.Height = 270;
+            Animals_DataGrid.Height = 250;
 
             GridLengthConverter glConverter = new GridLengthConverter();
             RowListAnimal.Height = (GridLength) glConverter.ConvertFrom("300px")!;
@@ -378,7 +406,7 @@ namespace RefugeWPF.CouchePresentation.View.Animal
          */
         private void CloseForm()
         {
-            Animals_DataGrid.Height = 550;
+            Animals_DataGrid.Height = 450;
 
             GridLengthConverter glConverter = new GridLengthConverter();
             RowListAnimal.Height = (GridLength)glConverter.ConvertFrom("600px")!;

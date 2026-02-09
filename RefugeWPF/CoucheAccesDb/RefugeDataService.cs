@@ -17,7 +17,7 @@ namespace RefugeWPF.CoucheAccesDB
     {
         /**
          * <summary>
-         *  Gère l'ajout d'une admission pour un animal
+         *  Gère l'ajout d'une admission (entrée) pour un animal
          * </summary>
          */ 
         public bool HandleCreateAdmission(Admission admission)
@@ -72,7 +72,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
-
+        /**
+         * <summary>
+         *  Ajouter une admission
+         * </summary>
+         */
         public bool CreateAdmission(Admission admission, NpgsqlTransaction transaction)
         {
             bool result = false;
@@ -82,8 +86,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    INSERT INTO public."Admissions" ("Id", "Reason", "DateCreated", "ContactId", "AnimalId")
-                    VALUES (:id, :reason, :dateCreated, :contactId, :animalId)
+                    SELECT * FROM create_admission(:id, :reason, :dateCreated, :animalId, :contactId);
                     """,
                     this.SqlConn,
                     transaction
@@ -123,6 +126,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Lister les admissions
+         * </summary>
+         */
         public HashSet<Admission> GetAdmissions() {
             HashSet<Admission> result = new HashSet<Admission>();
             NpgsqlCommand? sqlCmd = null;
@@ -132,39 +140,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT adm."Id" AS "Id",
-                            adm."Reason" AS "Reason",
-                            adm."DateCreated" AS "DateCreated",
-                            adm."AnimalId" AS "AnimalId",
-                            adm."ContactId" AS "ContactId",
-                            a."Name" AS "Name",
-                            a."Type" AS "Type",
-                            a."Gender" AS "Gender",
-                            a."BirthDate" AS "BirthDate",
-                            a."DeathDate" AS "DeathDate",
-                            a."IsSterilized" AS "IsSterilized",
-                            a."DateSterilization" AS "DateSterilization",
-                            a."Particularity" AS "Particularity",
-                            a."Description" AS "Description",
-                            c."Firstname" AS "Firstname",
-                            c."Lastname" AS "Lastname",
-                            c."RegistryNumber" AS "RegistryNumber",
-                            c."Email" AS "Email",
-                            c."PhoneNumber" AS "PhoneNumber",
-                            c."MobileNumber" AS "MobileNumber",
-                            c."AddressId" AS "AddressId",
-                            add."Street" AS "Street",
-                            add."City" AS "City",
-                            add."State" AS "State",
-                            add."ZipCode" AS "ZipCode",
-                            add."Country" AS "Country"
-                    FROM public."Admissions" adm
-                    INNER JOIN public."Animals" a
-                        ON adm."AnimalId" = a."Id"
-                    INNER JOIN public."Contacts" c
-                        ON adm."ContactId" = c."Id"
-                    INNER JOIN public."Addresses" add
-                        ON c."AddressId" = add."Id"
+                    SELECT * FROM get_admissions();
                     """,
                     this.SqlConn
                 );
@@ -176,7 +152,7 @@ namespace RefugeWPF.CoucheAccesDB
                 while (reader.Read()) {
                     DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
                     DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
-                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
 
                     //
                     Animal animal = new Animal(
@@ -286,7 +262,7 @@ namespace RefugeWPF.CoucheAccesDB
                     // Dates for animal's instance
                     DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
                     DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
-                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
 
                     //
                     Animal animalInDb = new Animal(
@@ -355,6 +331,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Lister les animaux accueillis par une famille d'accueil
+         * </summary>
+         */
         public List<FosterFamily> GetFosterFamiliesForContact(string registryNumber) {
             List<FosterFamily> result = new List<FosterFamily>();
             NpgsqlCommand? sqlCmd = null;
@@ -386,7 +367,7 @@ namespace RefugeWPF.CoucheAccesDB
                     // Dates for animal's instance
                     DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
                     DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
-                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
 
                     //
                     Animal animalInDb = new Animal(
@@ -453,6 +434,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Lister les familles d'accueil 
+         * </summary>
+         */
         public HashSet<FosterFamily> GetFosterFamilies()
         {
             HashSet<FosterFamily> result = new HashSet<FosterFamily>();
@@ -515,7 +501,7 @@ namespace RefugeWPF.CoucheAccesDB
                     // Dates for animal's instance
                     DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
                     DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
-                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
 
                     //
                     Animal animal = new Animal(
@@ -583,6 +569,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Ajouter une sortie en famille d'accueil
+         * </summary>
+         */
         public bool CreateReleaseForFosterFamily(FosterFamily fosterFamily, Release release)
         {
             bool result = false;
@@ -621,9 +612,10 @@ namespace RefugeWPF.CoucheAccesDB
         }
 
         /**
-         * 
-         * 
-         */ 
+         * <summary>
+         *  Ajouter une sortie
+         * </summary>
+         */
         public bool CreateRelease(Release release, NpgsqlTransaction? transaction = null)
         {
             bool result = false;
@@ -677,6 +669,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Gère l'ajout d'une admission pour un animal
+         * </summary>
+         */
         public bool CreateFosterFamily(FosterFamily fosterFamily, NpgsqlTransaction transaction)
         {
             bool result = false;
@@ -731,6 +728,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Récupérer une famille d'accueil
+         * </summary>
+         */
         public FosterFamily GetFosterFamily(Contact contact, Animal animal)
         {
             FosterFamily? result = null;
@@ -741,7 +743,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT * FROM get_active_foster_family(:animalId, :contactId)
+                    SELECT * FROM get_foster_family(:animalId, :contactId)
                     """,
                     this.SqlConn
                 );
@@ -766,7 +768,7 @@ namespace RefugeWPF.CoucheAccesDB
                     // Dates for animal's instance
                     DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
                     DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
-                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
 
                     //
                     Animal animalInDb = new Animal(
@@ -834,6 +836,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result!;
         }
 
+        /**
+         * <summary>
+         *  Mettre à jour une famille d'accueil lors d'un retour
+         * </summary>
+         */
         public bool UpdateFosterFamily(FosterFamily fosterFamily, NpgsqlTransaction transaction)
         {
             bool result = false;
@@ -843,24 +850,21 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    UPDATE public."FosterFamilies"
-                    SET "DateStart" = :dateStart,
-                        "DateEnd" = :dateEnd
-                    WHERE "AnimalId" = :animalId AND "ContactId" = :contactId
+                    SELECT * FROM update_foster_family(:id, :dateStart, :dateEnd)
                     """,
                     this.SqlConn,
                     transaction
                 );
 
-                sqlCmd.Parameters.Add(new NpgsqlParameter("animalId", NpgsqlTypes.NpgsqlDbType.Varchar));
-                sqlCmd.Parameters.Add(new NpgsqlParameter("contactId", NpgsqlTypes.NpgsqlDbType.Uuid));
+                
+                sqlCmd.Parameters.Add(new NpgsqlParameter("id", NpgsqlTypes.NpgsqlDbType.Uuid));
                 sqlCmd.Parameters.Add(new NpgsqlParameter("dateStart", NpgsqlTypes.NpgsqlDbType.Date));
                 sqlCmd.Parameters.Add(new NpgsqlParameter("dateEnd", NpgsqlTypes.NpgsqlDbType.Date));
 
                 sqlCmd.Prepare();
 
-                sqlCmd.Parameters["animalId"].Value = fosterFamily.AnimalId;
-                sqlCmd.Parameters["contactId"].Value = fosterFamily.ContactId;
+                
+                sqlCmd.Parameters["id"].Value = fosterFamily.Id;
                 sqlCmd.Parameters["dateStart"].Value = fosterFamily.DateStart;
                 sqlCmd.Parameters["dateEnd"].Value = fosterFamily.DateEnd != null ? fosterFamily.DateEnd : DBNull.Value;
 
@@ -886,6 +890,11 @@ namespace RefugeWPF.CoucheAccesDB
 
         }
 
+        /**
+         * <summary>
+         *  Lister les adoptions
+         * </summary>
+         */
         public HashSet<Adoption> GetAdoptions()
         {
             HashSet<Adoption> result = new HashSet<Adoption>();
@@ -896,41 +905,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT ado."Id" AS "Id",
-                           ado."Status" AS "Status",
-                           ado."DateCreated" AS "DateCreated",
-                           ado."DateStart" AS "DateStart",
-                           ado."DateEnd" AS "DateEnd",
-                           ado."AnimalId" AS "AnimalId",
-                           ado."ContactId" AS "ContactId",
-                           a."Name" AS "Name",
-                           a."Type" AS "Type",
-                           a."Gender" AS "Gender",
-                           a."BirthDate" AS "BirthDate",
-                           a."DeathDate" AS "DeathDate",
-                           a."IsSterilized" AS "IsSterilized",
-                           a."DateSterilization" AS "DateSterilization",
-                           a."Particularity" AS "Particularity",
-                           a."Description" AS "Description",
-                           c."Firstname" AS "Firstname",
-                           c."Lastname" AS "Lastname",
-                           c."RegistryNumber" AS "RegistryNumber",
-                           c."Email" AS "Email",
-                           c."PhoneNumber" AS "PhoneNumber",
-                           c."MobileNumber" AS "MobileNumber",
-                           c."AddressId" AS "AddressId",
-                           add."Street" AS "Street",
-                           add."City" AS "City",
-                           add."State" AS "State",
-                           add."ZipCode" AS "ZipCode",
-                           add."Country" AS "Country"
-                    FROM public."Adoptions" ado
-                    INNER JOIN public."Animals" a
-                        ON ado."AnimalId" = a."Id"
-                    INNER JOIN public."Contacts" c
-                        ON ado."ContactId" = c."Id"
-                    INNER JOIN public."Addresses" add
-                        ON c."AddressId" = add."Id"
+                    SELECT * FROM get_adoptions();
                     """,
                     this.SqlConn
                 );
@@ -949,7 +924,7 @@ namespace RefugeWPF.CoucheAccesDB
                     // Dates for animal's instance
                     DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
                     DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
-                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
 
                     //
                     Animal animalInDb = new Animal(
@@ -1018,6 +993,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Récupérer une adoption par le nom de l'animal et le numéro de registre national de la personne de contact
+         * </summary>
+         */
         public Adoption GetAdoption(Contact contact, Animal animal)
         {
             Adoption? result = null;
@@ -1028,52 +1008,20 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT ado."Id" AS "Id",
-                           ado."Status" AS "Status",
-                           ado."DateCreated" AS "DateCreated",
-                           ado."DateStart" AS "DateStart",
-                           ado."DateEnd" AS "DateEnd",
-                           ado."AnimalId" AS "AnimalId",
-                           ado."ContactId" AS "ContactId",
-                           a."Name" AS "Name",
-                           a."Type" AS "Type",
-                           a."Gender" AS "Gender",
-                           a."BirthDate" AS "BirthDate",
-                           a."DeathDate" AS "DeathDate",
-                           a."IsSterilized" AS "IsSterilized",
-                           a."DateSterilization" AS "DateSterilization",
-                           a."Particularity" AS "Particularity",
-                           a."Description" AS "Description",
-                           c."Firstname" AS "Firstname",
-                           c."Lastname" AS "Lastname",
-                           c."RegistryNumber" AS "RegistryNumber",
-                           c."Email" AS "Email",
-                           c."PhoneNumber" AS "PhoneNumber",
-                           c."MobileNumber" AS "MobileNumber",
-                           c."AddressId" AS "AddressId",
-                           add."Street" AS "Street",
-                           add."City" AS "City",
-                           add."State" AS "State",
-                           add."ZipCode" AS "ZipCode",
-                           add."Country" AS "Country"
-                    FROM public."Adoptions" ado
-                    INNER JOIN public."Animals" a
-                        ON ado."AnimalId" = a."Id"
-                    INNER JOIN public."Contacts" c
-                        ON ado."ContactId" = c."Id"
-                    INNER JOIN public."Addresses" add
-                        ON c."AddressId" = add."Id"
-                    WHERE ado."AnimalId" = :animalId
-                    ORDER BY ado."DateCreated" DESC
+                    SELECT * FROM get_adoption(:animalId, :contactId);
                     """,
                     this.SqlConn
                 );
 
                 sqlCmd.Parameters.Add(new NpgsqlParameter("animalId", NpgsqlTypes.NpgsqlDbType.Varchar));
+                sqlCmd.Parameters.Add(new NpgsqlParameter("contactId", NpgsqlTypes.NpgsqlDbType.Uuid));
+
 
                 sqlCmd.Prepare();
 
                 sqlCmd.Parameters["animalId"].Value = animal.Id;
+                sqlCmd.Parameters["contactId"].Value = contact.Id;
+
 
                 reader = sqlCmd.ExecuteReader();
 
@@ -1086,7 +1034,7 @@ namespace RefugeWPF.CoucheAccesDB
                     // Dates for animal's instance
                     DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
                     DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
-                    DateOnly? dateSterilization = reader["dateSterilization"] != DBNull.Value ? (DateOnly)reader["dateSterilization"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
 
                     //
                     Animal animalInDb = new Animal(
@@ -1157,6 +1105,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Ajouter une adoption
+         * </summary>
+         */
         public bool CreateAdoption(Adoption adoption)
         {
             bool result = false;
@@ -1165,9 +1118,8 @@ namespace RefugeWPF.CoucheAccesDB
             try
             {
                 sqlCmd = new NpgsqlCommand(
-                     """
-                    INSERT INTO public."Adoptions" ("Id", "Status", "DateCreated", "DateStart", "DateEnd", "AnimalId", "ContactId")
-                    VALUES (:id, :status, :dateCreated, :dateStart, :dateEnd, :animalId, :contactId)
+                    """
+                    SELECT * FROM create_adoption(:id, :status, :dateCreated, :dateStart, :dateEnd, :animalId, :contactId)
                     """,
                     this.SqlConn
                 );
@@ -1215,7 +1167,9 @@ namespace RefugeWPF.CoucheAccesDB
         }
 
         /**
-         * 
+         * <summary>
+         *  Ajouter une sortie pour adoption
+         * </summary>
          */ 
         public bool CreateReleaseForAdoption(Adoption adoption, Release release)
         {
@@ -1254,6 +1208,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Mettre à jour une adoption
+         * </summary>
+         */
         public bool UpdateAdoption(Adoption adoption, NpgsqlTransaction? transaction = null)
         {
             bool result = false;
@@ -1263,11 +1222,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    UPDATE public."Adoptions"
-                    SET "Status" = :status,
-                        "DateStart" = :dateStart,
-                        "DateEnd" = :dateEnd
-                    WHERE "Id" = :id
+                    SELECT * FROM update_adoption(:id, :status, :dateStart, :dateEnd);
                     """,
                     this.SqlConn
                 );
@@ -1307,6 +1262,143 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Lister les vaccinations
+         * </summary>
+         */
+        public List<Vaccination> GetVaccinations()
+        {
+            List<Vaccination > result = new List<Vaccination>();
+            NpgsqlCommand? sqlCmd = null;
+            NpgsqlDataReader? reader = null;
+
+            try
+            {
+                sqlCmd = new NpgsqlCommand(
+                    """
+                    SELECT * FROM get_vaccinations();
+                    """,
+                    this.SqlConn
+                );
+
+                sqlCmd.Prepare();
+
+                reader = sqlCmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+
+                    // Dates for animal's instance
+                    DateOnly? birthDate = reader["BirthDate"] != DBNull.Value ? (DateOnly)reader["BirthDate"] : null;
+                    DateOnly? deathDate = reader["DeathDate"] != DBNull.Value ? (DateOnly)reader["DeathDate"] : null;
+                    DateOnly? dateSterilization = reader["DateSterilization"] != DBNull.Value ? (DateOnly)reader["DateSterilization"] : null;
+
+                    // Dates for vaccination's instance
+                    DateOnly? dateVaccination = reader["DateVaccination"] != DBNull.Value ? (DateOnly)reader["DateVaccination"] : null;
+
+                    Vaccine vaccine = new Vaccine(
+                        new Guid(Convert.ToString(reader["VaccineId"])!),
+                        Convert.ToString(reader["VaccineName"])!
+                    );
+
+                    Animal animal = new Animal(
+                        Convert.ToString(reader["AnimalId"])!,
+                        Convert.ToString(reader["Name"])!,
+                        Convert.ToString(reader["Type"])!,
+                        Convert.ToString(reader["Gender"])!,
+                        birthDate,
+                        deathDate,
+                        Convert.ToBoolean(reader["IsSterilized"])!,
+                        dateSterilization,
+                        Convert.ToString(reader["Particularity"])!,
+                        Convert.ToString(reader["Description"])!
+                    );
+
+                    Vaccination vaccination = new Vaccination(
+                        new Guid(Convert.ToString(reader["Id"])!),
+                        Convert.ToDateTime(reader["DateCreated"])!,
+                        dateVaccination,
+                        Convert.ToBoolean(reader["Done"])!,
+                        animal,
+                        vaccine
+                    );
+
+                    result.Add(vaccination);
+                }
+
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erreur lors de récupération de tous les vaccinations.\nMessage : {ex.Message}.\nErreur  : {ex}");
+
+                if(sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, $"Erreur lors de récupération de tous les vaccinations.\nMessage : {ex.Message}.\nErreur  : {ex}");
+                else
+                    throw new AccessDbException("sqlCmd is null", $"Erreur lors de récupération de tous les vaccinations.\nMessage : {ex.Message}.\nErreur  : {ex}");
+
+            }
+
+            return result;
+        }
+
+        /**
+         * <summary>
+         *  Lister les vaccins
+         * </summary>
+         */
+        public List<Vaccine> GetVaccines()
+        {
+            List<Vaccine> result = new List<Vaccine>();
+            NpgsqlCommand? sqlCmd = null;
+            NpgsqlDataReader? reader = null;
+
+            try
+            {
+                sqlCmd = new NpgsqlCommand(
+                    """
+                    SELECT * FROM get_vaccines()
+                    """,
+                    this.SqlConn
+                );
+
+                sqlCmd.Prepare();
+
+                reader = sqlCmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result.Add(new Vaccine(
+                        new Guid(Convert.ToString(reader["Id"])!),
+                        Convert.ToString(reader["Name"])!
+                    ));
+                }
+
+                reader.Close();
+
+            }
+            catch (Exception ex)
+            {
+                if(reader != null) 
+                    reader.Close();
+
+                Debug.WriteLine($"Erreur lors de la récupération des vaccins.\nMessage : {ex.Message}.\nErreur : {ex}");
+
+                if (sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, $"Erreur lors de la récupération des vaccins.\nMessage : {ex.Message}.\nErreur : {ex}");
+                else
+                    throw new AccessDbException("sqlCmd is null", $"Erreur lors de la récupération des vaccins.\nMessage : {ex.Message}.\nErreur : {ex}");
+            }
+
+            return result;
+        }
+
+        /**
+         * <summary>
+         *  Récupérer un vaccin
+         * </summary>
+         */
         public Vaccine? GetVaccine(string name)
         {
             Vaccine? result = null;
@@ -1356,6 +1448,11 @@ namespace RefugeWPF.CoucheAccesDB
             return result;
         }
 
+        /**
+         * <summary>
+         *  Ajouter un vaccin
+         * </summary>
+         */
         public Vaccine CreateVaccine(Vaccine vaccine)
         {
             Vaccine? result = null;
@@ -1408,8 +1505,10 @@ namespace RefugeWPF.CoucheAccesDB
         }
 
         /**
-         * Créer une vaccination 
-         */ 
+         * <summary>
+         *  Ajouter une vaccination 
+         * </summary>
+         */
         public bool CreateVaccination(Vaccination vaccination)
         {
             bool result = false;
@@ -1419,8 +1518,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    INSERT INTO public."Vaccinations" ("Id", "DateCreated", "DateVaccination", "Done", "AnimalId", "VaccineId")
-                    VALUES (:id, :dateCreated, :dateVaccination, :done, :animalId, :vaccineId)
+                    SELECT * FROM create_vaccination(:id, :dateCreated, :dateVaccination, :done, :animalId, :vaccineId)
                     """,
                     this.SqlConn
                 );
@@ -1636,7 +1734,7 @@ namespace RefugeWPF.CoucheAccesDB
         }
 
         /**
-         * Check constraint : Release exists since last admission's date
+         * Contrainte : Date_sortie: il n’y a qu’une seule sortie depuis la plus récente date d’entrée de l’animal
          * 
          * 
          */

@@ -67,6 +67,31 @@ namespace RefugeWPF.CoucheMetiers.Model.Entities
             this.Description = description;
         }
 
+        public Animal(
+            string id,
+            string name,
+            string type,
+            string gender,
+            DateOnly? birthDate,
+            DateOnly? deathDate,
+            bool isSterilized,
+            DateOnly? dateSterilization,
+            string particularity,
+            string description
+        )
+        {
+            this.Id = id;
+            this.Name = name;
+            this.Type = type;
+            this.Gender = gender;
+            this.BirthDate = birthDate;
+            this.DeathDate = deathDate;
+            this.IsSterilized = isSterilized;
+            this.DateSterilization = dateSterilization;
+            this.Particularity = particularity;
+            this.Description = description;
+        }
+
 
 
         [Key]

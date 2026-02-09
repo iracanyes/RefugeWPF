@@ -143,7 +143,15 @@ namespace RefugeWPF.CouchePresentation.ViewModel
          * </summary>
          *  
          */
-        public List<string> AdmissionReasons { get; set; } = MyEnumHelper.GetEnumDescriptions<AdmissionType>().ToList();
+        public List<string> AdmissionReasons
+        {
+            get;
+            set
+            {
+                field = value;
+                NotifyPropertyChanged();
+            }
+        } = MyEnumHelper.GetEnumDescriptions<AdmissionType>().ToList();
 
         /**
          * <summary>
@@ -228,7 +236,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
             _compatibilities = new ObservableCollection<Compatibility>(this.animalDataService.GetCompatibilities());
             _addedAnimalCompatibilities = new ObservableCollection<AnimalCompatibilityDTO>();
             SelectedAnimalColors = new ObservableCollection<Color>();
-            SelectedAdmissionReason = "inconnu";
+            SelectedAdmissionReason = "";
 
         }
 

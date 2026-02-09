@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 
 namespace RefugeWPF.CouchePresentation.View.Contact
 {
@@ -96,7 +97,7 @@ namespace RefugeWPF.CouchePresentation.View.Contact
                 ContactAddressCountry.Text = selectedContact.Address.Country;
 
                 // Sauvegarde du contact sélectionné
-                vm.SelectedContact = vm.DataGridSelectedItem;
+                vm.SelectedContact = selectedContact;
                 
 
             }
@@ -138,6 +139,49 @@ namespace RefugeWPF.CouchePresentation.View.Contact
             }
         }
 
+        /**
+         * <summary>
+         *  Vérifier les contraintes d'intégrité
+         * </summary>
+         * <returns>
+         * </returns>
+         */
+        private bool CheckConstraints()
+        {
+            ContactViewModel vm = (ContactViewModel)this.DataContext;
+            StringBuilder sb = new StringBuilder();
+            Regex emailRegex = new Regex("^[A-Za-z0-9.%!#$/?^|~]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+            Regex registryNumberRegex = new Regex("^(\\d{2})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2]\\d|3[0-1])-(\\d{3})\\.(\\d{2})$");
+
+            // Vérification des contraintes
+            if (!registryNumberRegex.IsMatch(vm.RegistryNumber))
+                sb.Append("Numéro de registre national : Doit avoir le format suivant => yy.mm.dd-999.99\n");
+
+
+            if (vm.Firstname.Length < 2 || vm.Lastname.Length < 2)
+                sb.Append("Nom et prénom : Doivent avoir au moins 2 caractères.\n");
+
+
+            if (vm.Email != string.Empty && (vm.Email != null  && !emailRegex.IsMatch(vm.Email)))
+                sb.Append("Email : Doit avoir un format valide!\n");
+
+            if (vm.Email == "" && vm.PhoneNumber == "" && vm.MobileNumber == "")
+                sb.Append("Moyen de contact (email, N° tel. fixe, N° mobile) : Au moins moyen de contact doit être défini\n");
+
+            if (vm.Street == "" || vm.City == "" || vm.State == "" || vm.ZipCode == "" || vm.Country == "")
+                sb.Append("Adresse : Compléter tous les champs de l'adresse.");
+
+            string errorMessage = sb.ToString();
+
+            if (errorMessage.Length > 0)
+            {
+                MessageBox.Show(errorMessage);
+                return false;
+            }
+
+            return true;
+        }
+
 
 
         /**
@@ -147,12 +191,13 @@ namespace RefugeWPF.CouchePresentation.View.Contact
          */
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
-            RefugeWPF.CoucheMetiers.Model.Entities.Animal? animal = null;
             ContactViewModel vm = (ContactViewModel)this.DataContext;
+
+            if (!this.CheckConstraints())
+                return;
 
             try
             {
-
                
 
                 if(vm.SelectedContact != null)
@@ -184,7 +229,7 @@ namespace RefugeWPF.CouchePresentation.View.Contact
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors l'ajout d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
-                throw new Exception("Erreur lors l'ajout d'un animal.");
+                MessageBox.Show("Erreur lors l'ajout d'un animal.");
             }
 
         }
@@ -207,6 +252,7 @@ namespace RefugeWPF.CouchePresentation.View.Contact
             ContactFirstname.Text = "";
             ContactLastname.Text = "";
             ContactRegistryNumber_TextBox.Text = "";
+            ContactRegistryNumber_TextBox.IsReadOnly = false;
             ContactEmail.Text = "";
             ContactPhoneNumber_TextBox.Text =  "";
             ContactMobilePhone_TextBox.Text = "";
@@ -214,7 +260,7 @@ namespace RefugeWPF.CouchePresentation.View.Contact
             ContactAddressCity.Text = "";
             ContactAddressState.Text = "";
             ContactAddressZipCode.Text = "";
-            ContactAddressCountry.Text = "";
+            ContactAddressCountry.Text = "Belgique";
 
             // Vider la collection des couleurs de l'animal
             vm.SelectedContactRoles.Clear();
@@ -234,7 +280,7 @@ namespace RefugeWPF.CouchePresentation.View.Contact
          */
         private void OpenForm()
         {
-            Contacts_DataGrid.Height = 270;
+            Contacts_DataGrid.Height = 250;
 
             // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();
@@ -253,7 +299,7 @@ namespace RefugeWPF.CouchePresentation.View.Contact
          */
         private void CloseForm()
         {
-            Contacts_DataGrid.Height = 550;
+            Contacts_DataGrid.Height = 450;
 
             // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();

@@ -7,7 +7,7 @@ namespace RefugeWPF.CoucheMetiers.Model.Entities
 {
     internal class Vaccination
     {
-        // Constructor used by EntityFramework
+        // 
         public Vaccination(DateOnly? dateVaccination, bool done, Animal animal, Vaccine vaccine)
             : this(Guid.NewGuid(), DateTime.Now, dateVaccination, done, animal, vaccine)
         { }

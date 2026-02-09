@@ -138,6 +138,15 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
+         *  Liste des vaccinations
+         * </summary>
+         */
+        List<Vaccination> GetVaccinations();
+
+        List<Vaccine> GetVaccines();
+
+        /**
+         * <summary>
          *  Récupérer un vaccin
          * </summary>
          */

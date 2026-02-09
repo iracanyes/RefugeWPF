@@ -7,6 +7,423 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30px" />
+            <RowDefinition Height="50px" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Titre de page -->
+        <TextBlock 
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            FontSize="20"
+            FontWeight="Bold"
+            FontFamily="Bell MT"
+            Text="{Binding Title}" 
+        />
+
+
+        <!--==== Barre de recherche =============================================-->
+        <StackPanel 
+            x:Name="SearchAnimalForm"
+            Grid.Row="1"
+            Orientation="Horizontal"
+            Height="50" 
+            Background="BlueViolet" 
+        >
+            <TextBlock 
+            Text="Nom de l'animal" 
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Margin="10,0"
+            FontSize="14"
+            FontWeight="Bold"
+        />
+
+            <TextBox 
+                Width="200"
+                Height="30"
+        
+            />
+
+            <Button 
+                Content="Recherche"
+                Margin="10,0"
+                FontWeight="SemiBold"
+                FontSize="12"
+                Height="32"
+                Background="BlueViolet"
+                Foreground="White"
+                BorderThickness="2"
+                VerticalAlignment="Center"
+            />
+        </StackPanel>
+
+        <!--======= Main Content ============================================-->
+        <Grid 
+            Grid.Row="2"
+        >
+
+            <Grid.RowDefinitions>
+                <RowDefinition Name="RowListAdoption" MaxHeight="500px"/>
+                <RowDefinition Height="50px"/>
+                <RowDefinition Name="RowFormAdoption" Height="300px"/>
+            </Grid.RowDefinitions>
+
+            <!--========== Liste des admissions =========================================================-->
+            <StackPanel
+            Grid.Row="0"
+            Orientation="Vertical"
+        >
+                <!-- Titre de la liste -->
+                <TextBlock 
+                    Text="Liste des adoptions"
+                    HorizontalAlignment="Center"
+                    Margin="0,5"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    FontFamily="Segoe UI"
+                />
+
+                <!--========== Liste des admissions =========================================================-->
+                <DataGrid
+                    Name="Adoptions_DataGrid"
+                    Margin="5"
+                    Height="380"
+                    HorizontalAlignment="Center"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding Adoptions}"
+                    SelectedItem="{Binding AdoptionDataGridSelectedItem}"
+                    AutoGenerateColumns="False"
+                >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated, StringFormat={}{0:dd/MM/yyyy hh:mm}}" Width="150" />
+                        <DataGridTextColumn Header="Statut de l'adoption" Binding="{Binding Status}" Width="150"/>
+                        <DataGridTextColumn Header="Début de l'adoption" Binding="{Binding DateStart, StringFormat={}{0:dd/MM/yyyy}}" Width="150"/>
+                        <DataGridTextColumn Header="Fin de l'adoption" Binding="{Binding DateEnd, StringFormat={}{0:dd/MM/yyyy}}" Width="150"/>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Animal.Name}" Width="150"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Animal.Type}" Width="80"/>
+                        <DataGridTextColumn Header="Genre" Binding="{Binding Animal.Gender}" Width="50"/>
+                        <DataGridTextColumn Header="Couleurs" Binding="{Binding Animal.AnimalColors, Converter={StaticResource AnimalColorsToStringConverter}}" />
+                        <DataGridTextColumn Header="Date de naissance" Binding="{Binding Animal.BirthDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
+                        <DataGridTextColumn Header="Date de décès" Binding="{Binding Animal.DeathDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
+                        <DataGridCheckBoxColumn Header="Stérilisé" Binding="{Binding Animal.IsSterilized}" Width="80" />
+                        <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization, StringFormat={}{0:dd/MM/yyyy}}" />
+                        <DataGridTextColumn Header="Particularité" Binding="{Binding Animal.Particularity}"  Width="180"/>
+                        <DataGridTextColumn Header="Description" Binding="{Binding Animal.Description}" Width="180"/>
+                        <DataGridTextColumn Header="Nom du déposant" Binding="{Binding Contact.Firstname}" Width="120" />
+                        <DataGridTextColumn Header="Prénom du déposant" Binding="{Binding Contact.Lastname}" Width="120" />
+                        <DataGridTextColumn Header="Email" Binding="{Binding Contact.Email}" Width="120" />
+
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <!--======== Menu de bouton ====================================================-->
+            <StackPanel 
+                Grid.Row="1"
+                Background="BlueViolet" 
+                Orientation="Horizontal" 
+                HorizontalAlignment="Center"
+            >
+
+                <Button 
+                    Content="Ajouter"
+                    Margin="10,0"
+                    FontWeight="SemiBold"
+                    FontSize="12"
+                    Height="32"
+                    Background="BlueViolet"
+                    Foreground="White"
+                    BorderThickness="2"
+                    VerticalAlignment="Center"
+                    Click="EnableCreateAdoption"
+                />
+
+                <Button 
+                    Content="Modifier"
+                    Margin="10,0"
+                    FontWeight="SemiBold"
+                    FontSize="12"
+                    Height="32"
+                    Background="BlueViolet"
+                    Foreground="White"
+                    BorderThickness="2"
+                    VerticalAlignment="Center"
+                    Click="EnableUpdateAdoption"
+                />
+
+
+            </StackPanel>
+
+            <!--========= Panneau en bas de page ===========================================-->
+
+            <StackPanel
+                Name="AdoptionFormSection"
+                Grid.Row="2"
+                Orientation="Vertical"
+                Margin="10,5,5,5"
+        
+            >
+                <StackPanel.Background>
+                    <SolidColorBrush Color="Wheat" Opacity="0.7" />
+                </StackPanel.Background>
+
+                <TextBlock 
+                    Text="{Binding TitleForm}"
+                    Margin="0,10,0,5"
+                    HorizontalAlignment="Center"
+                    Padding="5"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    FontFamily="Segoe UI"
+                    Foreground="BlueViolet"
+                />
+
+                <ScrollViewer 
+                    VerticalScrollBarVisibility="Visible"
+                    Margin="10,0,0,0"
+                    Height="300"
+                >
+                    <StackPanel
+                    Orientation="Vertical"    
+                >
+                        <!--========= Formulaire adoption =================================================-->
+                        <GroupBox
+                            Name="FormAdoptionSection"
+                            Header="Adoption"
+                            Margin="10"
+                            FontSize="14"
+                            FontFamily="Segoe UI"
+                            FontWeight="Bold"
+                        >
+                            <StackPanel
+                                Orientation="Vertical"
+                            >
+                                <StackPanel
+                                    Orientation="Horizontal"
+                                >
+                                    <TextBlock 
+                                        Text="Statut de l'adoption"
+                                        FontSize="14"
+                                        FontFamily="Segoe UI"
+                                        FontWeight="Bold"
+                                        Margin="10,0"
+                                        VerticalAlignment="Center"
+                                    />
+                                    <ComboBox 
+                                        Name="AdoptionStatus_ComboBox"
+                                        Width="250"
+                                        ItemsSource="{Binding AdoptionStatus, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValue="{Binding SelectedAdoptionStatus, UpdateSourceTrigger=PropertyChanged}"
+                                    />
+                                </StackPanel>
+
+                                <StackPanel
+                                    Orientation="Horizontal"    
+                                >
+                                    <!--===== Formulaire Famille d'accueil - Date de début ======================================-->
+                                    <StackPanel
+                                        Orientation="Vertical"
+                                        Margin="10,5"       
+                                    >
+                                        <TextBlock 
+                                            Text="Date de début"
+                                            FontSize="14"
+                                            FontFamily="Segoe UI"
+                                            FontWeight="Bold"
+                                            Margin="10,0"
+                                            VerticalAlignment="Center"
+                                        />
+                                        <DatePicker
+                                            Name="FosterFamilyDateStart_DatePicker"
+                                            Width="250"
+                                            SelectedDate="{Binding DateStart, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+                                    </StackPanel>
+
+                                    <!--===== Formulaire Famille d'accueil - Date de fin ======================================-->
+                                    <StackPanel
+                                        Orientation="Vertical"  
+                                        Margin="10,5"
+                                    >
+                                        <TextBlock 
+                                            Text="Date de fin"
+                                            FontSize="14"
+                                            FontFamily="Segoe UI"
+                                            FontWeight="Bold"
+                                            Margin="10,0"
+                                            VerticalAlignment="Center"
+                                        />
+                                        <DatePicker
+                                            Name="AdoptionDateEnd_DatePicker"
+                                            Width="250"
+                                            SelectedDate="{Binding DateEnd, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+                                    </StackPanel>
+                                </StackPanel>
+
+
+
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- ===== Formulaire personne de contact ======================================= -->
+                        <GroupBox
+                            Name="FormContactSection"
+                            Header="Personne de contact"
+                            Margin="10"
+                            FontSize="14"
+                            FontFamily="Segoe UI"
+                            FontWeight="Bold"
+                        >
+                            <StackPanel
+                                Orientation="Horizontal"
+                            >
+                                <TextBlock 
+                                    Text="Numéro de registre national"
+                                    FontSize="14"
+                                    FontFamily="Segoe UI"
+                                    FontWeight="Bold"
+                                    Margin="10,0"
+                                    VerticalAlignment="Center"
+                                />
+                                <TextBox 
+                                    Name="ContactRegistryNumber_Textbox"
+                                    Width="250"
+                                    MaxLength="15"
+                                    Text="{Binding FormContactRegistryNumber}"
+                                />
+
+                                <Button
+                                    Margin="10,5"
+                                    Background="BlueViolet"
+                                    Foreground="White"
+                                    FontSize="12"
+                                    Content="Valider"
+                                    Click="SearchContactButton_Click"
+                                ></Button>
+
+                                <!-- Affichage du résultat de la recherche de la personne de contact -->
+                                <TextBlock 
+                                    Name="ContactFullnameDisplay"
+                                    FontFamily="Segoe UI"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    VerticalAlignment="Center"
+                                >
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Personne de contact :  {0} {1}">
+                                            <Binding Path="ContactFound.Firstname" />
+                                            <Binding Path="ContactFound.Lastname" />
+
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!--========= Formulaire animal =================================================-->
+                        <GroupBox
+                            Name="FormAnimalSection"
+                            Header="Animal"
+                            Margin="10"   
+                            FontSize="14"
+                            FontFamily="Segoe UI"
+                            FontWeight="Bold"
+                        >
+                            <StackPanel
+                                Orientation="Vertical"    
+                            >
+                                <!--========= Formulaire recherche animal existant =================================================-->
+                                <StackPanel
+                                    Name="FormSearchAnimalSection"
+                                    Margin="0,5"
+                                >
+
+                                    <StackPanel
+                                        Orientation="Horizontal"
+                                    
+                                    >
+                                        <TextBlock 
+                                            Text="Nom de l'animal"
+                                            FontSize="14"
+                                            FontFamily="Segoe UI"
+                                            FontWeight="Bold"
+                                            Margin="10,0"
+                                            VerticalAlignment="Center"
+                                        />
+                                        <TextBox 
+                                            Name="AnimalSearchByName_Textbox"
+                                            Width="250"
+                                            Text="{Binding FormAnimalName}"
+                                        />
+
+                                        <Button
+                                            Margin="10,5"
+                                            Background="BlueViolet"
+                                            Foreground="White"
+                                            FontSize="12"
+                                            Content="Valider"
+                                            Click="SearchAnimalButton_Click"
+                                        ></Button>
+
+                                    </StackPanel>
+                                    <!-- Affichage du résultat de la recherche de la personne de contact -->
+                                    <StackPanel>
+                                        <DataGrid
+                                        Name="AnimalsFound_DataGrid"
+                                        ItemsSource="{Binding AnimalsFound, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedItem="{Binding AnimalFound, UpdateSourceTrigger=PropertyChanged}"
+                                        IsReadOnly="True"
+                                        AutoGenerateColumns="False"
+                                    >
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Nom" Binding="{Binding Name}" Width="150"/>
+                                                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="80"/>
+                                                <DataGridTextColumn Header="Genre" Binding="{Binding Gender}" Width="50"/>
+                                                <DataGridTextColumn Header="Couleurs" Binding="{Binding AnimalColors, Converter={StaticResource AnimalColorsToStringConverter}}" />
+                                                <DataGridTextColumn Header="Date de naissance" Binding="{Binding BirthDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                                
+                            </StackPanel>
+
+
+
+                        </GroupBox>
+
+
+                    </StackPanel>
+
+
+                </ScrollViewer>
+                <!-- Formulaire - Bouton d'action -->
+                <StackPanel
+                    HorizontalAlignment="Center"    
+                >
+                    <Button
+                        Margin="0,5" 
+                        Background="GreenYellow"
+                        Click="SubmitButton_Click"
+                    >
+                        Confirmer
+                    </Button>
+                </StackPanel>
+
+
+            </StackPanel>
+
+
+        </Grid>
+
+
+
     </Grid>
 </UserControl>

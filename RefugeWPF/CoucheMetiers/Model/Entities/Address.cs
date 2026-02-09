@@ -35,7 +35,7 @@ namespace RefugeWPF.CoucheMetiers.Model.Entities
 
         public override string ToString()
         {
-            return $"Address{{ street = {Street}, city = {City}, state = {State}, zipCode = {ZipCode}, country = {Country} }}";
+            return $"Address{{id = {Id}, street = {Street}, city = {City}, state = {State}, zipCode = {ZipCode}, country = {Country} }}";
         }
     }
 }

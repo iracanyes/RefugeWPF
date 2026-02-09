@@ -70,7 +70,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
             NavigateCommand = new RelayCommand<string>(OnNavigate);
 
 
-            CurrentViewModel = new AnimalViewModel();
+            _currentViewModel = new AnimalViewModel();
 
         }
 

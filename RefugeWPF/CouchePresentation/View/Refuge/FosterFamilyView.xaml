@@ -156,16 +156,16 @@
                 <DataGrid
                     Name="AnimalFosterFamilies_DataGrid"
                     Margin="5"
-                    Height="400"
+                    Height="280"
                     HorizontalAlignment="Center"
                     IsReadOnly="True"
                     ItemsSource="{Binding AnimalFosterFamilies, UpdateSourceTrigger=PropertyChanged}"
                     AutoGenerateColumns="False"
                 >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated}" Width="120" />
-                        <DataGridTextColumn Header="Début de l'accueil" Binding="{Binding DateStart}" Width="150"/>
-                        <DataGridTextColumn Header="Fin de l'accueil" Binding="{Binding DateEnd}" Width="150"/>                        
+                        <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated, StringFormat={}{0:dd/MM/yyyy hh:mm}}" Width="140" />
+                        <DataGridTextColumn Header="Début de l'accueil" Binding="{Binding DateStart, StringFormat={}{0:dd/MM/yyyy}}" Width="150"/>
+                        <DataGridTextColumn Header="Fin de l'accueil" Binding="{Binding DateEnd, StringFormat={}{0:dd/MM/yyyy}}" Width="150"/>                        
                         <DataGridTextColumn Header="Nom de l'accueillant" Binding="{Binding Contact.Firstname}" Width="120" />
                         <DataGridTextColumn Header="Prénom de l'accueillant" Binding="{Binding Contact.Lastname}" Width="120" />
                         <DataGridTextColumn Header="N° Registre national" Binding="{Binding Contact.RegistryNumber}" Width="120" />
@@ -177,10 +177,10 @@
                         <DataGridTextColumn Header="Type" Binding="{Binding Animal.Type}" Width="80"/>
                         <DataGridTextColumn Header="Genre" Binding="{Binding Animal.Gender}" Width="50"/>
                         <DataGridTextColumn Header="Couleurs" Binding="{Binding Animal.AnimalColors, Converter={StaticResource AnimalColorsToStringConverter}}" />
-                        <DataGridTextColumn Header="Date de naissance" Binding="{Binding Animal.BirthDate}" Width="120" />
-                        <DataGridTextColumn Header="Date de décès" Binding="{Binding Animal.DeathDate}" Width="120" />
+                        <DataGridTextColumn Header="Date de naissance" Binding="{Binding Animal.BirthDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
+                        <DataGridTextColumn Header="Date de décès" Binding="{Binding Animal.DeathDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
                         <DataGridCheckBoxColumn Header="Stérilisé" Binding="{Binding Animal.IsSterilized}" Width="80" />
-                        <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization}" />
+                        <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization, StringFormat={}{0:dd/MM/yyyy}}" />
                         <DataGridTextColumn Header="Particularité" Binding="{Binding Animal.Particularity}"  Width="180"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Animal.Description}" Width="180"/>
 
@@ -190,7 +190,7 @@
                 <DataGrid
                     Name="FosterFamilyAnimals_DataGrid"
                     Margin="5"
-                    Height="400"
+                    Height="380"
                     HorizontalAlignment="Center"
                     IsReadOnly="True"
                     ItemsSource="{Binding FosterFamilyAnimals}"
@@ -198,17 +198,17 @@
                     Visibility="Collapsed"
                 >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated}" Width="120" />
+                        <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated, StringFormat={}{0:dd/MM/yyyy hh:mm}}" Width="120" />
                         <DataGridTextColumn Header="Début" Binding="{Binding DateStart}" Width="150"/>
                         <DataGridTextColumn Header="Fin de l'accueil" Binding="{Binding DateEnd}" Width="150"/>
                         <DataGridTextColumn Header="Nom" Binding="{Binding Animal.Name}" Width="150"/>
                         <DataGridTextColumn Header="Type" Binding="{Binding Animal.Type}" Width="80"/>
                         <DataGridTextColumn Header="Genre" Binding="{Binding Animal.Gender}" Width="50"/>
                         <DataGridTextColumn Header="Couleurs" Binding="{Binding Animal.AnimalColors, Converter={StaticResource AnimalColorsToStringConverter}}" />
-                        <DataGridTextColumn Header="Date de naissance" Binding="{Binding Animal.BirthDate}" Width="120" />
-                        <DataGridTextColumn Header="Date de décès" Binding="{Binding Animal.DeathDate}" Width="120" />
+                        <DataGridTextColumn Header="Date de naissance" Binding="{Binding Animal.BirthDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
+                        <DataGridTextColumn Header="Date de décès" Binding="{Binding Animal.DeathDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
                         <DataGridCheckBoxColumn Header="Stérilisé" Binding="{Binding Animal.IsSterilized}" Width="80" />
-                        <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization}" />
+                        <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization, StringFormat={}{0:dd/MM/yyyy}}" />
                         <DataGridTextColumn Header="Particularité" Binding="{Binding Animal.Particularity}"  Width="180"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Animal.Description}" Width="180"/>
                         <DataGridTextColumn Header="Nom de l'accueillant" Binding="{Binding Contact.Firstname}" Width="120" />
@@ -355,6 +355,7 @@
                                 <TextBox 
                                     Name="ContactRegistryNumber_Textbox"
                                     Width="250"
+                                    MaxLength="15"
                                     Text="{Binding FormContactRegistryNumber, UpdateSourceTrigger=PropertyChanged}"
                                 />
 
@@ -363,7 +364,7 @@
                                     Background="BlueViolet"
                                     Foreground="White"
                                     FontSize="12"
-                                    Content="Rechercher"
+                                    Content="Valider"
                                     Click="SearchContactButton_Click"
                                 ></Button>
 
@@ -427,7 +428,7 @@
                                             Background="BlueViolet"
                                             Foreground="White"
                                             FontSize="12"
-                                            Content="Rechercher"
+                                            Content="Valider"
                                             Click="SearchAnimalButton_Click"
                                         ></Button>
 

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -91,6 +92,13 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         private void SearchContactButton_Click(object sender, RoutedEventArgs e)
         {
             FosterFamilyViewModel vm = (FosterFamilyViewModel)this.DataContext;
+            Regex regex = new Regex("^(\\d{2})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2]\\d|3[0-1])-(\\d{3})\\.(\\d{2})$");
+
+            if (!regex.IsMatch(ContactRegistryNumber_Textbox.Text))
+            {
+                MessageBox.Show("Le numéro de registre national doit être au format yy.mm.dd-999.99");
+                return;
+            }
 
             try
             {
@@ -106,7 +114,7 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
 
         /**
          * <summary>
-         *  Recherche de la personne de contact  
+         *  Recherche de l'animal  
          * </summary>
          * 
          */
@@ -143,16 +151,17 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
                 this.ClearForm();
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                MessageBox.Show(ex.Message);
             }
         }
 
         /**
          * <summary>
-         *  
+         *  Evénement "Click" sur le bouton "Confirmer". 
+         *  Permet d'ajouter une famille d'accueil pour un animal
          * </summary>
          */
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
@@ -221,8 +230,8 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
          */
         private void OpenForm()
         {
-            AnimalFosterFamilies_DataGrid.Height = 270;
-            FosterFamilyAnimals_DataGrid.Height = 270;
+            AnimalFosterFamilies_DataGrid.Height = 250;
+            FosterFamilyAnimals_DataGrid.Height = 250;
 
             // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();
@@ -241,8 +250,8 @@ namespace RefugeWPF.CouchePresentation.View.Refuge
         private void CloseForm()
         {
             
-            AnimalFosterFamilies_DataGrid.Height = 550;
-            FosterFamilyAnimals_DataGrid.Height = 550;
+            AnimalFosterFamilies_DataGrid.Height = 420;
+            FosterFamilyAnimals_DataGrid.Height = 420;
 
             // Changement manuelle de la hauteur des grilles 
             GridLengthConverter glConverter = new GridLengthConverter();

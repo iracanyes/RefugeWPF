@@ -47,11 +47,11 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
         public string RegistryNumber { get; set; } = string.Empty;
 
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; } 
 
-        public string PhoneNumber {  get; set; } = string.Empty;
+        public string? PhoneNumber {  get; set; } 
 
-        public string MobileNumber {  get; set; } = string.Empty;
+        public string? MobileNumber {  get; set; } 
 
         public string Street { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
@@ -87,6 +87,8 @@ namespace RefugeWPF.CouchePresentation.ViewModel
          */ 
         public void CreateContact()
         {
+            
+
             try
             {
                 Address address = new Address(

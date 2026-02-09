@@ -74,7 +74,15 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
         public DateTime? DateEnd { get; set; }
 
-        public string? FormAnimalName { get; set; }
+        public string? FormAnimalName
+        {
+            get;
+            set
+            {
+                field = value;
+                this.NotifyPropertyChanged();
+            }
+        }
 
         public ObservableCollection<Animal> AnimalsFound
         {
@@ -95,7 +103,15 @@ namespace RefugeWPF.CouchePresentation.ViewModel
             }
         }
 
-        public string? FormContactRegistryNumber { get; set; }
+        public string? FormContactRegistryNumber
+        {
+            get;
+            set
+            {
+                field = value;
+                this.NotifyPropertyChanged();
+            }
+        }
 
         public Contact? ContactFound { 
             get;
@@ -184,7 +200,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
         /**
          * <summary>
-         *  Search existing contact  
+         *  Rechercher une personne de contact  
          * </summary>
          */
         internal void SearchContact()
@@ -210,7 +226,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
         /**
          * <summary>
-         *  Search existing animal  
+         *  Rechercher un animal 
          * </summary>
          */
         internal void SearchAnimal()

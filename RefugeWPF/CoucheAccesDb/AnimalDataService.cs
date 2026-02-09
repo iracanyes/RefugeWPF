@@ -23,7 +23,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Ajouter un animal
          * </summary>
          */
         public Animal CreateAnimal(Animal animal)
@@ -35,8 +35,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    INSERT INTO public."Animals" ("Id", "Name", "Type", "Gender", "BirthDate", "DeathDate", "IsSterilized","DateSterilization", "Particularity", "Description")
-                    VALUES (:id, :name, :type, :gender, :dateBirth, :dateDeath, :isSterilized, :dateSterilization, :particularity, :description )
+                    SELECT * FROM create_animal(:id, :name, :type, :gender, :dateBirth, :dateDeath, :isSterilized, :dateSterilization, :particularity, :description );
                     """,
                     this.SqlConn
                 );
@@ -91,7 +90,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Récupérer la liste des animaux
          * </summary>
          */
         public List<Animal> GetAnimals()
@@ -104,10 +103,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    SELECT *
-                    FROM public."Animals" a
-                    ORDER BY "Name" DESC
-                    LIMIT 20
+                    SELECT * FROM get_animals();
                     """,
                     SqlConn
                 );
@@ -171,7 +167,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Retrieve an animal record by name
+         *  Récupérer les animaux ayant le même nom
          * </summary>
          */
         public List<Animal> GetAnimalByName(string name)
@@ -185,8 +181,7 @@ namespace RefugeWPF.CoucheAccesDB
                 sqlCmd = new NpgsqlCommand(
                     $"""
                     SELECT *
-                    FROM public."Animals" a
-                    WHERE "Name" = :name
+                    FROM get_animal_by_name(:name);
                     """,
                     SqlConn
                 );
@@ -253,7 +248,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Récupérer un animal par son identifiant
          * </summary>
          */
         public Animal? GetAnimalById(string id)
@@ -267,8 +262,7 @@ namespace RefugeWPF.CoucheAccesDB
                 sqlCmd = new NpgsqlCommand(
                     $"""
                     SELECT *
-                    FROM public."Animals" a
-                    WHERE "Id" = :id
+                    FROM get_animal_by_id(:id)
                     """,
                     SqlConn
                 );
@@ -333,7 +327,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Récupérer les couleurs d'un animal
          * </summary>
          */
         public HashSet<AnimalColor> GetAnimalColors(Animal animal)
@@ -345,14 +339,8 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT ac."Id" as "Id",
-                            ac."AnimalId" AS "AnimalId",
-                            ac."ColorId" AS "ColorId",
-                            c."Name" AS "ColorName"
-                    FROM public."AnimalColors" ac
-                    INNER JOIN public."Colors" c
-                        ON ac."ColorId" = c."Id"
-                    WHERE ac."AnimalId" = :animalId
+                    SELECT *
+                    FROM get_animal_colors(:animalId);
                     """,
                     this.SqlConn
                 );
@@ -373,7 +361,7 @@ namespace RefugeWPF.CoucheAccesDB
                             new Guid(Convert.ToString(reader["Id"])!),
                             animal,
                             new Color(
-                                new Guid(Convert.ToString(reader["Id"])!),
+                                new Guid(Convert.ToString(reader["ColorId"])!),
                                 Convert.ToString(reader["ColorName"])!
                             )
                         )
@@ -402,7 +390,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Supprimer un animal
          * </summary>
          */
         public bool RemoveAnimal(Animal animal)
@@ -414,8 +402,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    DELETE FROM public."Animals" a
-                    WHERE "Id" = :id
+                    SELECT * FROM delete_animal(:id);
                     """, 
                     this.SqlConn
                 );
@@ -445,7 +432,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Mettre à jour un animal
          * </summary>
          */
         public Animal UpdateAnimal(Animal animal)
@@ -457,17 +444,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    UPDATE public."Animals"
-                    SET "Name" = :name,
-                        "Type" = :type,
-                        "Gender" = :gender,
-                        "BirthDate" = :dateBirth,
-                        "DeathDate" = :dateDeath,
-                        "IsSterilized" = :isSterilized,
-                        "DateSterilization" = :dateSterilization,
-                        "Particularity" = :particularity,
-                        "Description" = :description
-                    WHERE "Id" = :id
+                    SELECT * FROM update_animal(:id, :name,  :type, :gender, :dateBirth,  :dateDeath, :isSterilized, :dateSterilization, :particularity, :description);
                     """,
                     this.SqlConn
                 );
@@ -525,7 +502,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Ajouter une compatibilité
          * </summary>
          */
         public bool CreateCompatibility(Compatibility compatibility, NpgsqlTransaction? transaction = null) {
@@ -536,8 +513,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                      """
-                     INSERT INTO public."Compatibilities" ("Id", "Type")
-                     VALUES (:id, :type)
+                     SELECT * FROM create_compatibility(:id, :type);
                      """,
                      this.SqlConn,
                      transaction
@@ -572,7 +548,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Ajouter une compatibilité pour un animal
          * </summary>
          */
         public bool CreateAnimalCompatibility(AnimalCompatibility animalCompatibility)
@@ -584,8 +560,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     $"""
-                    INSERT INTO public."AnimalCompatibilities" ("Id", "Value", "Description", "AnimalId", "CompatibilityId")
-                    VALUES ( :id, :value, :description, :animalId, :compatibilityId )
+                    SELECT * FROM create_animal_compatibility( :id, :value, :description, :animalId, :compatibilityId );
                     """,
                     this.SqlConn
                 );
@@ -622,7 +597,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Récupérer la liste des compatibilités
          * </summary>
          */
         public HashSet<Compatibility> GetCompatibilities()
@@ -635,8 +610,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT *
-                    FROM public."Compatibilities"
+                    SELECT * FROM get_compatibilities();
                     """,
                     this.SqlConn
                 );
@@ -676,7 +650,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Create an animal record in database
+         *  Récupérer la liste des couleurs des animaux
          * </summary>
          */
         public HashSet<Color> GetColors()
@@ -689,8 +663,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    SELECT "Id", "Name"
-                    FROM public."Colors"
+                    SELECT * FROM get_colors();
                     """,
                     this.SqlConn
                 );
@@ -725,7 +698,7 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
-         * Gére 
+         *  Ajouter une couleur à un animal 
          * </summary>
          */
         public bool CreateAnimalColor(AnimalColor animalColor, NpgsqlTransaction? transaction = null)
@@ -737,8 +710,7 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 sqlCmd = new NpgsqlCommand(
                     """
-                    INSERT INTO public."AnimalColors" ("Id", "AnimalId", "ColorId")
-                    VALUES (:id, :animalId, :colorId)
+                    SELECT * FROM create_animal_color(:id, :animalId, :colorId);
                     """,
                     this.SqlConn,
                     transaction
