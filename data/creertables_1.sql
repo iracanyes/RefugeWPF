@@ -391,6 +391,15 @@ ALTER TABLE public."Vaccines" OWNER TO ipefa_iracanyes;
 
 CREATE UNIQUE INDEX IF NOT EXISTS  "IX_Vaccines_Name" ON public."Vaccines" USING btree ("Name");
 
+INSERT INTO public."Vaccines" ("Id", "Name")
+VALUES ('b50776f0-fdaf-4411-b192-0d5248e524dd', 'Typhus'),
+        ('fd05afa8-787e-407c-929a-3fc93aa0d176', 'Rage'),
+        ('8457e103-fa89-4aa4-969e-3a21d8794024', 'Adénovirus'),
+        ('31d5c448-a108-4c1c-8dec-8da4b9dbb62d', 'Maladie de carré'),
+        ('9fb27965-243e-4257-a983-de9b6d16fcef', 'Parvovirose (CHPP)'),
+        ('8ce6426b-1caa-46b6-9c2d-8b56c5a02a4b', 'Coryza'),
+        ('b298721a-dfb0-495e-ab5d-8d96ff8d113c', 'Leucose');
+
 ---------------------------------------------------------------------------------------------------------------------------------
 -- Vaccination : Table, index et contraintes
 ---------------------------------------------------------------------------------------------------------------------------------
