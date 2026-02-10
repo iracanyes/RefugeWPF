@@ -764,7 +764,7 @@ $$ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS get_vaccines CASCADE;
 
 CREATE OR REPLACE FUNCTION get_vaccines()
-RETURNS SETOF Vaccines AS $$
+RETURNS SETOF public."Vaccines" AS $$
 BEGIN
     RETURN QUERY SELECT v."Id" AS "Id",
                            v."Name" AS "Name"

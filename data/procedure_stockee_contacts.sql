@@ -453,3 +453,4 @@ $$ LANGUAGE plpgsql;
 /* Requête test;
     SELECT * FROM get_contact_roles('ba0759a9-60d8-4e6d-9adb-6b0303164b5d');
 */
+
