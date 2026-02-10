@@ -49,13 +49,13 @@ CREATE TABLE IF NOT EXISTS public."Animals" (
     CONSTRAINT "Check_Animals_Type" CHECK ( "Type" in ('chat', 'chien') ),
     -- Contrainte => sexe : {'M', 'F'}
     CONSTRAINT "Check_Animals_Gender" CHECK ( "Gender" IN ('M','F') ),
-    -- Contrainte => Date de naissance doit être supérieur ou égal à la date courante
+    -- Contrainte → Date de naissance doit être supérieur ou égal à la date courante
     CONSTRAINT "Check_Animals_BirthDate" CHECK ( "BirthDate" <= CURRENT_DATE ),
-    -- Contrainte => Date de décès d’un animal est soit nulle ou soit supérieure à sa date de naissance
+    -- Contrainte → Date de décès d’un animal est soit nulle ou soit supérieure à sa date de naissance
     CONSTRAINT "Check_Animals_DeathDate" CHECK ( "DeathDate" IS NULL OR ("DeathDate" > "BirthDate") ),
-    -- Contrainte => Si l’animal n’est pas stérilisé alors la date de stérilisation est nulle
+    -- Contrainte → Si l’animal n’est pas stérilisé alors la date de stérilisation est nulle
     CONSTRAINT "Check_Animals_IsSterilized" CHECK ( "IsSterilized" IS TRUE OR ("IsSterilized" IS FALSE AND "DateSterilization" IS NULL)),
-    -- Contrainte => La date de stérilisation est soit nulle ou soit supérieure à sa date de naissance
+    -- Contrainte → La date de stérilisation est soit nulle ou soit supérieure à sa date de naissance
     CONSTRAINT "Check_Animals_DateSterilization" CHECK ( "DateSterilization" IS NULL OR ("DateSterilization" > "BirthDate") )
 
 );
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS public."Contacts" (
     "Id" uuid NOT NULL,
     "Firstname" text NOT NULL,
     "Lastname" text NOT NULL,
-    -- Contrainte => Registre national unique
+    -- Contrainte → Registre national unique
     "RegistryNumber" text UNIQUE NOT NULL,
     "Email" text,
     "PhoneNumber" text,
@@ -135,9 +135,9 @@ CREATE TABLE IF NOT EXISTS public."Contacts" (
     CONSTRAINT "Check_Contacts_RegistryNumber_Length" CHECK ((char_length("RegistryNumber") <= 15)),
     -- Contrainte => registre_nat : yy.mm.dd-999.99
     CONSTRAINT "Check_Contacts_RegistryNumber_Valid" CHECK ( "RegistryNumber" ~* '^(\d{2})\.(0[1-9]|1[0-2])\.(0[1-9]|[1-2]\d|3[0-1])-(\d{3})\.(\d{2})$' ),
-    -- Contrainte => Nom et prénom doivent être de format valide (au moins 2 caractères)
+    -- Contrainte → Nom et prénom doivent être de format valide (au moins 2 caractères)
     CONSTRAINT "Check_Contacts_Firstname_Lastname" CHECK ( (char_length("Firstname") >= 2) AND (char_length("Lastname") >= 2 ) ),
-    -- Contrainte => Email de la personne de contact doit être un format valide
+    -- Contrainte → Email de la personne de contact doit être un format valide
     CONSTRAINT "Check_Contacts_Email_Valid" CHECK ( "Email" IS NULL OR "Email" = '' OR "Email" ~* '^[A-Za-z0-9.%!#$/?^|~]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' )
 );
 
