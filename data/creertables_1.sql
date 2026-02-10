@@ -418,11 +418,34 @@ CREATE INDEX IF NOT EXISTS  "IX_Vaccinations_AnimalId" ON public."Vaccinations" 
 CREATE INDEX IF NOT EXISTS  "IX_Vaccinations_VaccineId" ON public."Vaccinations" USING btree ("VaccineId");
 
 
+-----------------------------------------------------------------------------------------------------------------------------
+-- =============== Correction DB ==============================================================================================
+-------------------------------------------------------------------------------------------------------------------------------
 
+--------------------------------------------------------------------------------------------------------------------------------
+-- Contrainte : Format email
+--------------------------------------------------------------------------------------------------------------------------------
 
+ALTER TABLE public."Contacts"
+DROP CONSTRAINT "Check_Contacts_Email_Valid";
 
+ALTER TABLE public."Contacts"
+ADD CONSTRAINT  "Check_Contacts_Email_Valid" CHECK ( "Email" IS NULL OR "Email" = '' OR "Email" ~* '^[A-Za-z0-9.%!#$/?^|~]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' );
 
+--------------------------------------------------------------------------------------------------------------------------
+-- Correction du schema : Index Adoptions ContactId => Supprimer la définition de l'index comme étant à identifiant unique
+----------------------------------------------------------------------------------------------------------------------------
+DROP INDEX IF EXISTS "IX_Adoptions_ContactId";
 
+CREATE INDEX IF NOT EXISTS  "IX_Adoptions_ContactId" ON public."Adoptions" USING btree ("ContactId");
+---------------------------------------------------------------------------------------------------------------------
+-- Correction du schema : Si l’animal n’est pas stérilisé alors la date de stérilisation est nulle
+----------------------------------------------------------------------------------------------------------------------
+ALTER TABLE public."Animals"
+    DROP CONSTRAINT "Check_Animals_IsSterilized";
+
+ALTER TABLE public."Animals"
+    ADD CONSTRAINT "Check_Animals_IsSterilized"  CHECK ( "IsSterilized" IS TRUE OR ("IsSterilized" IS FALSE AND "DateSterilization" IS NULL));
 
 
 
