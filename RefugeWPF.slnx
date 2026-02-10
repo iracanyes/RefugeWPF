@@ -6,6 +6,7 @@
     <File Path="data/procedure_stockee_contacts.sql" />
     <File Path="data/procedure_stockee_refuge.sql" />
     <File Path="docker-compose.yml" />
+    <File Path="README.md" />
   </Folder>
   <Project Path="RefugeWPF/RefugeWPF.csproj" />
 </Solution>
