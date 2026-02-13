@@ -351,6 +351,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
                             this.animalDataService.CreateAnimalCompatibility(ac);
 
+                            savedAnimal.AnimalCompatibilities.Add(ac);
 
                         }
                         // Vider la liste temporaire des compatibilités pour l'animal
@@ -379,7 +380,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors l'ajout d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
-
+                MessageBox.Show(ex.Message);
             }
         }
 

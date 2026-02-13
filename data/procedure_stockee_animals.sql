@@ -297,8 +297,31 @@ $$ LANGUAGE plpgsql;
 --====================================== Procédure stockée : AnimalCompatibility ============================================
 ---------------------------------------------------------------------------------------------------------------------
 
+ --------------------------------------------------------------------------------------
+-- Type : Compatibilité pour un animal
+-----------------------------------------------------------------------------------------
+DROP TYPE IF EXISTS AnimalCompatibilities CASCADE;
+
+CREATE TYPE AnimalCompatibilities AS (
+    "Id" UUID,
+    "Value" BOOLEAN,
+    "AnimalCompatibilityDescription" TEXT,
+    "AnimalId" VARCHAR,
+    "CompatibilityId" UUID,
+    "Name" TEXT,
+    "AnimalType" TEXT,
+    "Gender" VARCHAR(1),
+    "BirthDate" DATE,
+    "DeathDate" DATE,
+    "IsSterilized" BOOLEAN,
+    "DateSterilization" DATE,
+    "Particularity" TEXT,
+    "AnimalDescription" TEXT,
+    "CompatibilityType" TEXT
+);
+
 --------------------------------------------------------------------------------------
--- Procédure stockée : Compatibilité - Ajouter une compatibilité pour un animal
+-- Procédure stockée : Compatibilité pour un animal - Ajouter une compatibilité pour un animal
 -----------------------------------------------------------------------------------------
 
 DROP FUNCTION IF EXISTS create_animal_compatibility CASCADE;
@@ -329,4 +352,36 @@ $$ LANGUAGE plpgsql;
 */
 
 
+------------------------------------------------------------------------------------------------------------
+-- Procédure stockée : Compatibilité pour un animal - Récupérer la liste des compatibilités pour un animal
+------------------------------------------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS get_animal_compatibilities;
+
+CREATE OR REPLACE FUNCTION get_animal_compatibilities(
+    animalId VARCHAR
+) RETURNS SETOF AnimalCompatibilities AS $$
+    BEGIN
+        RETURN QUERY SELECT ac."Id" AS "Id",
+                            ac."Value" AS "Value",
+                            ac."Description" AS "AnimalCompatibilityDescription",
+                            ac."AnimalId" AS "AnimalId",
+                            ac."CompatibilityId" AS "CompatibilityId",
+                            a."Name" AS "Name",
+                            a."Type" AS "AnimalType",
+                            a."Gender" AS "Gender",
+                            a."BirthDate" AS "BirthDate",
+                            a."DeathDate" AS "DeathDate",
+                            a."IsSterilized" AS "IsSterilized",
+                            a."DateSterilization" AS "DateSterilization",
+                            a."Particularity" AS "Particularity",
+                            a."Description" AS "Description",
+                            c."Type" AS "CompatibilityType"
+                     FROM public."AnimalCompatibilities" ac
+                     INNER JOIN public."Animals" a
+                         ON a."Id" = ac."AnimalId"
+                     INNER JOIN public."Compatibilities" c
+                         ON c."Id" = ac."CompatibilityId"
+                     WHERE ac."AnimalId" = animalId;
+    END;
+$$ LANGUAGE plpgsql;
 

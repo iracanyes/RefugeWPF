@@ -2,13 +2,10 @@
 using RefugeWPF.CoucheMetiers.Helper;
 using RefugeWPF.CoucheMetiers.Model.Entities;
 using RefugeWPF.CoucheMetiers.Model.Enums;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
 
 namespace RefugeWPF.CouchePresentation.ViewModel
@@ -315,7 +312,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors de l'ajout d'une candidature pour adoption.\nMessage : {ex.Message}.\nErreur : {ex}");
-                MessageBox.Show(ex.Message);
+                MessageBox.Show($"Erreur lors de l'ajout d'une candidature pour adoption.\nMessage : {ex.Message}.\n");
             }
         }
 

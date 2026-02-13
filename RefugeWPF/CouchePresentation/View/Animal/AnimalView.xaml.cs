@@ -172,6 +172,11 @@ namespace RefugeWPF.CouchePresentation.View.Animal
             
         }
 
+        /**
+         * <summary>
+         *  Vérifie les contraintes d'intégrité pour les objets animal
+         * </summary>
+         */ 
         private bool CheckConstraints()
         {
             AnimalViewModel vm = (AnimalViewModel)this.DataContext;
@@ -251,6 +256,8 @@ namespace RefugeWPF.CouchePresentation.View.Animal
                     // Mettre à jour l'animal
                     vm.UpdateAnimal(animal);
 
+
+
                     this.ClearForm();
 
                     this.CloseForm();
@@ -261,12 +268,6 @@ namespace RefugeWPF.CouchePresentation.View.Animal
                 {
                     throw new Exception($"Aucun identifiant d'animal n'est fourni!");
                 }
-
-                // Clean form
-                this.ClearForm();
-
-                // Close Form
-                this.CloseForm();
                 
                 
             }

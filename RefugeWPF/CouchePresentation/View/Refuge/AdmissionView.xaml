@@ -111,6 +111,7 @@
                         <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization, StringFormat={}{0:dd/MM/yyyy}}" />
                         <DataGridTextColumn Header="Particularité" Binding="{Binding Animal.Particularity}"  Width="180"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Animal.Description}" Width="180"/>
+                        <DataGridTextColumn Header="Compatibilités" Binding="{Binding Animal.AnimalCompatibilities, Converter={StaticResource AnimalCompatibilitiesToStringConverter}}" />
                         <DataGridTextColumn Header="Nom du déposant" Binding="{Binding Contact.Firstname}" Width="120" />
                         <DataGridTextColumn Header="Prénom du déposant" Binding="{Binding Contact.Lastname}" Width="120" />
                         <DataGridTextColumn Header="Email" Binding="{Binding Contact.Email}" Width="120" />

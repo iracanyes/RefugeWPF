@@ -100,6 +100,8 @@
                     SelectedItem="{Binding Animals_DatagridSelection}"
                     AutoGenerateColumns="False"
                 >
+                    
+                    
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nom" Binding="{Binding Name}" Width="150"/>
                         <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="80"/>
@@ -111,6 +113,10 @@
                         <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding DateSterilization, StringFormat={}{0:dd/MM/yyyy}}" />
                         <DataGridTextColumn Header="Particularité" Binding="{Binding Particularity}"  Width="180"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="180"/>
+                        <DataGridTextColumn 
+                            Header="Compatibilités" 
+                            Binding="{Binding AnimalCompatibilities, Converter={StaticResource AnimalCompatibilitiesToStringConverter}}"
+                        />
                         
                     </DataGrid.Columns>
                 </DataGrid>

@@ -60,6 +60,7 @@
             <cvt:AnimalColorsToStringConverter x:Key="AnimalColorsToStringConverter" />
             <cvt:AddressToStringConverter x:Key="AddressToStringConverter" />
             <cvt:ContactRolesToStringConverter x:Key="ContactRolesToStringConverter" />
+            <cvt:AnimalCompatibilitiesToStringConverter x:Key="AnimalCompatibilitiesToStringConverter" />
 
         </ResourceDictionary>
 

@@ -314,15 +314,19 @@ RETURNS TRIGGER AS $$
             RAISE EXCEPTION 'Au moins un moyen de contact doit être défini (email, N° fixe, N° mobile)!';
         END IF;
 
-        SELECT EXISTS(
-            SELECT 1
-            FROM public."Contacts"
-            WHERE "RegistryNumber" = NEW."RegistryNumber"
-        ) INTO registryNumberExists;
+        -- TG_OP indique l'opération déclenchante
+        IF TG_OP = 'INSERT' THEN
+            SELECT EXISTS(
+                SELECT 1
+                FROM public."Contacts"
+                WHERE "RegistryNumber" = NEW."RegistryNumber"
+            ) INTO registryNumberExists;
 
-        IF registryNumberExists THEN
-            RAISE EXCEPTION 'Le numéro de registre national existe déjà en base de donnée!';
+            IF registryNumberExists THEN
+                RAISE EXCEPTION 'Le numéro de registre national existe déjà en base de donnée!';
+            END IF;
         END IF;
+
 
 
         RETURN NEW;

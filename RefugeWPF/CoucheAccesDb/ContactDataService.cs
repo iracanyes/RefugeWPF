@@ -63,10 +63,14 @@ namespace RefugeWPF.CoucheAccesDB
                 result = true;
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine($"Erreur lors de la création d'une adresse.\nMessage : {ex.Message}");
 
-                throw;
+                if (sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, $"Erreur lors de la création d'une adresse.\nMessage : {ex.Message}");
+                else
+                    throw new Exception($"Erreur lors de la création d'une adresse.\nMessage : {ex.Message}");
             }
 
             return result;
@@ -116,12 +120,12 @@ namespace RefugeWPF.CoucheAccesDB
                     transaction.Rollback();
 
                 if (Debugger.IsAttached)
-                    Debug.WriteLine($"Unable to create a ContactRole instance. \nMessage :\n {ex.Message}.\nException :\n{ex}");
+                    Debug.WriteLine($"Erreur lors de la création d'un rôle pour la personne de contact. \nMessage :\n {ex.Message}.\nException :\n{ex}");
                 
                 if (sqlCmd != null)
-                    throw new AccessDbException(sqlCmd.CommandText, $"Unable to create a ContactRole instance. \nMessage :\n {ex.Message}.\nException :\n{ex}");
+                    throw new AccessDbException(sqlCmd.CommandText, $"Erreur lors de la création d'un rôle pour la personne de contact. \nMessage :\n {ex.Message}.");
                 else
-                    throw new AccessDbException("Unable to create an sqlCommand for inserting a ContactRole instance", $"Unable to insert a ContactRole instance. \nMessage :\n {ex.Message}.\nException :\n{ex}");
+                    throw new Exception($"Erreur lors de la création d'un rôle pour la personne de contact.\nMessage :\n {ex.Message}.");
             }
 
             return result;
@@ -158,7 +162,7 @@ namespace RefugeWPF.CoucheAccesDB
                     transaction.Rollback();
 
                 Debug.WriteLine($"Erreur lors de la création d'une personne de contact.\nMessage : {ex.Message}");
-                throw;
+                throw new Exception($"Erreur lors de la création d'une personne de contact.\nMessage : {ex.Message}");
             }
 
             return result;
@@ -218,14 +222,14 @@ namespace RefugeWPF.CoucheAccesDB
             catch (Exception ex)
             {
                 if(Debugger.IsAttached)
-                    Debug.WriteLine($"Unable to create a contact info instance.\nObject : \n{contact}\nReason : \n{ex.Message}\nException : \n{ex}");
+                    Debug.WriteLine($"Erreur lors de la création d'une personne de contact.\nRaison : \n{ex.Message}\nException : \n{ex}");
                 
                 if(transaction != null && transaction.Connection != null) transaction.Rollback();
 
                 if (sqlCmd != null)
-                    throw new AccessDbException(sqlCmd.CommandText, $"Unable to create a Contact instance. \nError: {ex.Message}.\nException: {ex}");
+                    throw new AccessDbException(sqlCmd.CommandText, $"Erreur lors de la création d'une personne de contact.\nError: {ex.Message}.");
                 else
-                    throw new AccessDbException("SqlCommand is null", $"Unable to create a Contact instance. \nError: {ex.Message}.\nException: {ex}.");
+                    throw new Exception($"Erreur lors de la création d'une personne de contact.\nError: {ex.Message}.");
 
 
             }
@@ -303,7 +307,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, ex.Message);
                 else
-                    throw new AccessDbException("sqlCmd is null", $"Unable to create a contact info instance. Message : {ex.Message}\nException : {ex}");
+                    throw new Exception($"Unable to create a contact info instance. Message : {ex.Message}\nException : {ex}");
 
             }
 
@@ -367,15 +371,15 @@ namespace RefugeWPF.CoucheAccesDB
             catch (Exception ex)
             {
 
-                Debug.WriteLine($"Unable to retrieve a contact instance with ID : {id}.\nReason :\n{ex.Message}\nException : \n{ex}");
+                Debug.WriteLine($"Erreur lors de la récupération de la personne de contact.\nReason :\n{ex.Message}\nException : \n{ex}");
 
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, ex.Message);
                 else
-                    throw new AccessDbException($"Unable to retrieve a contact instance with ID : {id}.", ex.Message);
+                    throw new Exception($"Erreur lors de la récupération de la personne de contact.\nMessage: {ex.Message}");
             }
 
-            if (result == null) throw new Exception($"Unable to retrieve a contact instance with ID: {id}");
+            if (result == null) throw new Exception($"Erreur lors de la récupération de la personne de contact.");
 
             return result;
 
@@ -445,15 +449,15 @@ namespace RefugeWPF.CoucheAccesDB
             {
                 reader?.Close();
 
-                Debug.WriteLine($"Unable to create a contact info instance.\nRegistryNumber : \n{registryNumber}\nReason : \n{ex.Message}\nException : \n{ex}");
+                Debug.WriteLine($"Erreur lors de la création d'une personne de contact.\nReason : \n{ex.Message}\nException : \n{ex}");
                 if(sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, ex.Message);
-                else 
-                    throw new AccessDbException($"Unable to create a contact info instance.\nRegistryNumber : \n{registryNumber}", ex.Message);
+                else  
+                    throw new Exception($"Erreur lors de la création d'une personne de contact.\n{ex.Message}");
 
             }
 
-            if (result == null) throw new Exception($"Unable to retrieve a contact info instance with registry number : {registryNumber}");
+            if (result == null) throw new Exception($"Erreur lors de la création d'une personne de contact.");
 
             return result;
         }
@@ -511,9 +515,9 @@ namespace RefugeWPF.CoucheAccesDB
                     Debug.WriteLine($"Unable to update an address instance.\n Exception message: {ex.Message}.\nException : {ex}");
 
                 if (sqlCmd != null)
-                    throw new AccessDbException(sqlCmd.CommandText, $"Unable to update an address instance.\n Exception message: {ex.Message}.\nException : {ex}");
+                    throw new AccessDbException(sqlCmd.CommandText, $"Unable to update an address instance.\n Exception message: {ex.Message}.");
                 else
-                    throw new AccessDbException("SqlCommand - UpdateAddress", $"Unable to update an address instance.\n Exception message: {ex.Message}.\nException : {ex}");
+                    throw new Exception($"Unable to update an address instance.\n Exception message: {ex.Message}.");
             }
 
 
@@ -582,9 +586,9 @@ namespace RefugeWPF.CoucheAccesDB
                     Debug.WriteLine($"Unable to update a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}\nException : \n{ex}");
 
                 if (sqlCmd != null)
-                    throw new AccessDbException(sqlCmd.CommandText, $"Unable to update a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}\nException : \n{ex}");
+                    throw new AccessDbException(sqlCmd.CommandText, $"Unable to update a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}");
                 else
-                    throw new AccessDbException("sqlCmd is null", $"Unable to update a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}\nException : \n{ex}");
+                    throw new Exception($"Unable to update a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}");
             }
 
             if (result == null) throw new Exception($"Unable to update a contact instance with registry number : {contact.RegistryNumber}");
@@ -615,7 +619,7 @@ namespace RefugeWPF.CoucheAccesDB
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors la mise à jour d'un contact.\nMessage : {ex.Message}.\nErreur : {ex} ");
-                throw new AccessDbException("HandleUpdateContact", ex.Message);
+                throw new Exception(ex.Message);
             }
 
             return result;
@@ -662,7 +666,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Unable to delete a contact's role instance : {contactRole.Id}.\nReason :\n{ex.Message}\nException : \n{ex}");
                 else
-                    throw new AccessDbException($"DeleteContact : qlCmd is null", $"Unable to delete a contact's role instance : {contactRole.Id}.\nReason :\n{ex.Message}\nException : \n{ex}");
+                    throw new Exception($"Unable to delete a contact's role instance : {contactRole.Id}.\nReason :\n{ex.Message}\nException : \n{ex}");
             }
 
 
@@ -719,7 +723,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Unable to delete a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}\nException : \n{ex}");
                 else
-                    throw new AccessDbException($"DeleteContact : sqlCmd is null", $"Unable to delete a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}\nException : \n{ex}");
+                    throw new Exception($"Unable to delete a contact instance with registry number : {contact.RegistryNumber}.\nReason :\n{ex.Message}\nException : \n{ex}");
             }
             
 
@@ -771,7 +775,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Error while retrieving roles from DB. Error : {ex.Message}. Exception: {ex}");
                 else
-                    throw new AccessDbException("sqlCmd is NULL", $"Error while retrieving roles from DB. Error : {ex.Message}. Exception: {ex}");
+                    throw new Exception($"Error while retrieving roles from DB. Error : {ex.Message}. Exception: {ex}");
 
             }
 
@@ -826,7 +830,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Error while retrieving contact's roles from DB. Error : {ex.Message}. Exception: {ex}");
                 else
-                    throw new AccessDbException("sqlCmd is NULL", $"Error while retrieving contact's roles from DB. Error : {ex.Message}. Exception: {ex}");
+                    throw new Exception($"Error while retrieving contact's roles from DB. Error : {ex.Message}. Exception: {ex}");
             }
 
             return contact.ContactRoles;
@@ -888,7 +892,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Error while retrieving contact's roles from DB. Error : {ex.Message}. Exception: {ex}");
                 else
-                    throw new AccessDbException("sqlCmd is NULL", $"Error while retrieving contact's roles from DB. Error : {ex.Message}. Exception: {ex}");
+                    throw new Exception($"Error while retrieving contact's roles from DB. Error : {ex.Message}. Exception: {ex}");
             }
 
             return result;

@@ -134,7 +134,7 @@ namespace RefugeWPF.CoucheAccesDB
                     );
 
 
-
+                    
 
                     result.Add(animal);
 
@@ -145,14 +145,19 @@ namespace RefugeWPF.CoucheAccesDB
 
                 foreach (Animal a in result)
                 {
-                    // Retrieve animal's colors from DB
+                    // Récupére les couleurs de l'animal
                     this.GetAnimalColors(a);
+
+                    // Récupére les compatibilités de l'animal
+                    this.GetAnimalCompatibilities(a);
                 }
 
             }
             catch (Exception ex)
             {
                 if (reader != null) reader.Close();
+
+                Debug.WriteLine($"Erreur lors de la récupération des compatibilités pour un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
 
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, ex.ToString());
@@ -228,6 +233,9 @@ namespace RefugeWPF.CoucheAccesDB
                 {
                     // Retrieve animal's colors from DB
                     this.GetAnimalColors(a);
+
+                    // Récupére les compatibilités de l'animal
+                    this.GetAnimalCompatibilities(a);
                 }
 
             }
@@ -309,6 +317,9 @@ namespace RefugeWPF.CoucheAccesDB
 
                 // Retrieve animal's colors from DB
                 this.GetAnimalColors(result);
+
+                // Récupére les compatibilités de l'animal
+                this.GetAnimalCompatibilities(result);
             }
             catch (Exception ex)
             {
@@ -481,11 +492,13 @@ namespace RefugeWPF.CoucheAccesDB
 
                 if (nbRowAffected == 0) throw new AccessDbException(sqlCmd.CommandText, $"Unable to update animal with id {animal.Id}! No row affected!");
 
+                
+
                 result = GetAnimalById(animal.Id);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"AnimalDataService : Error while updating an animal with name {animal.Name} in DB!\nException :\n{ex.Message}\nException:\n{ex}");
+                Debug.WriteLine($"AnimalDataService : Error while updating an animal!\nException :\n{ex.Message}\nException:\n{ex}");
 
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, ex.Message);
@@ -589,11 +602,88 @@ namespace RefugeWPF.CoucheAccesDB
             catch (Exception ex)
             {
                 Debug.WriteLine($"Unable to create a compatibility with an animal.\nReason : {ex.Message}.\nObject :\n{animalCompatibility}\nException:\n{ex}");
-                throw;
+                if (sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, ex.Message);
+                else
+                    throw new Exception(ex.Message);
             }
 
             return result;
         }
+
+        /**
+         * <summary>
+         *  Récupérer la liste des compatibilités pour un animal
+         * </summary>
+         * 
+         */
+        public List<AnimalCompatibility> GetAnimalCompatibilities(Animal animal)
+        {
+            List<AnimalCompatibility> result = new List<AnimalCompatibility>();
+            NpgsqlCommand? sqlCmd = null;
+            NpgsqlDataReader? reader = null;
+
+            try
+            {
+                sqlCmd = new NpgsqlCommand(
+                    """
+                    SELECT * FROM get_animal_compatibilities(:animalId);
+                    """,
+                    this.SqlConn
+                );
+
+                sqlCmd.Parameters.Add(new NpgsqlParameter("animalId", NpgsqlTypes.NpgsqlDbType.Varchar));
+
+                sqlCmd.Prepare();
+
+                sqlCmd.Parameters["animalId"].Value = animal.Id;
+
+                reader = sqlCmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Compatibility compatibility = new Compatibility(
+                        new Guid(Convert.ToString(reader["CompatibilityId"])!),
+                        Convert.ToString(reader["CompatibilityType"])!
+                    );
+
+                    AnimalCompatibility ac = new AnimalCompatibility(
+                        new Guid(Convert.ToString(reader["Id"])!),
+                        animal,
+                        compatibility,                        
+                         reader["Value"] != DBNull.Value ? (bool?) Convert.ToBoolean(reader["Value"]) : null,
+                         reader["AnimalCompatibilityDescription"] != DBNull.Value ? Convert.ToString(reader["AnimalCompatibilityDescription"]) : null
+                    );
+
+
+                    animal.AnimalCompatibilities.Add(ac);
+                    Debug.WriteLine("========================================================================================================================");
+                    Debug.WriteLine(animal);
+
+                    result.Add( ac );
+
+
+                }
+
+                reader.Close();
+
+            }
+            catch (Exception ex)
+            {
+
+                if(reader != null) reader.Close();
+
+                Debug.WriteLine($"Erreur lors de la récupération des compatibilités pour l'animal.\nMessage : {ex.Message}.\nErreur : {ex}");
+
+                if (sqlCmd != null)
+                    throw new AccessDbException(sqlCmd.CommandText, $"Erreur lors de la récupération des compatibilités pour l'animal.\nMessage : {ex.Message}.\nErreur : {ex}");
+                else
+                    throw new Exception($"Erreur lors de la récupération des compatibilités pour l'animal.\nMessage : {ex.Message}.\n");
+            }
+
+            return result;
+        }
+
 
         /**
          * <summary>
@@ -641,7 +731,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Unable to retrieve compatibilities instance! Message: {ex.Message}.\nException : {ex}");
                 else
-                    throw new AccessDbException("SqlCommand is null!", $"Unable to retrieve compatibilities instance! Message: {ex.Message}.\nException : {ex}");
+                    throw new Exception($"Unable to retrieve compatibilities instance! Message: {ex.Message}.\nException : {ex}");
             }
 
             return result;
@@ -690,7 +780,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Error while retrieving animal's colors in database. Message : {ex.Message}. Error : {ex} ");
                 else
-                    throw new AccessDbException("SQL Command is null", $"Error while retrieving animal's colors in database. Message : {ex.Message}. Error : {ex} ");
+                    throw new Exception($"Error while retrieving animal's colors in database. Message : {ex.Message}. Error : {ex} ");
             }
 
             return colors;
@@ -745,7 +835,7 @@ namespace RefugeWPF.CoucheAccesDB
                 if (sqlCmd != null)
                     throw new AccessDbException(sqlCmd.CommandText, $"Error while creating animal's colors in database. Message : {ex.Message}. Error : {ex} ");
                 else
-                    throw new AccessDbException("SQL Command is null", $"Error while creating animal's colors in database. Message : {ex.Message}. Error : {ex} ");
+                    throw new Exception($"Error while creating animal's colors in database. Message : {ex.Message}. Error : {ex} ");
             }
 
 

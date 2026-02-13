@@ -79,12 +79,7 @@ namespace RefugeWPF.CoucheAccesDB
          */
         FosterFamily GetFosterFamily(Contact contact, Animal animal);
 
-        /**
-         * <summary>
-         *  Vérifie que l'animal est déjà en famille d'accueil
-         * </summary>
-         */
-        bool IsInFosterFamily(string animalId);
+        
 
         /**
          * <summary>
@@ -166,18 +161,6 @@ namespace RefugeWPF.CoucheAccesDB
          */
         bool CreateVaccination(Vaccination vaccination);
 
-        /**
-         * <summary>
-         *  Vérifie la contrainte  : Date_entree: Un animal ne peut être entrée plus d’une fois depuis une sortie
-         * </summary>
-         */
-        bool IsAdmittedSinceLastRelease(string animalId);
-
-        /**
-         * <summary>
-         *  Vérifie la contrainte : Date_sortie: il n’y a qu’une seule sortie depuis la plus récente date d’entrée de l’animal
-         * </summary>
-         */
-        bool IsReleasedSinceLastAdmission(string animalId);
+        
     }
 }

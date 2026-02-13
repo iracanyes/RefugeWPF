@@ -114,11 +114,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        /**
-         * <summary>
-         *  Affiche la liste des couleurs de chaque animal
-         * </summary>
-         */
+        
 
 
 
@@ -194,26 +190,9 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
             try
             {
+                
                 // Sauvegarde de l'animal
                 savedAnimal = this.animalDataService.UpdateAnimal(animal);
-                
-                
-                // Mettre à jour la liste d'animaux
-                Debug.WriteLine($"Index of {animal.Name} : {Animals.IndexOf(AnimalToUpdate!)}");
-                Animals[Animals.IndexOf(AnimalToUpdate!)] = savedAnimal;
-
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Erreur lors la mise à jour d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
-
-            }
-
-            try
-            {
-                if (savedAnimal == null)
-                    throw new Exception($"animal is null!");
 
                 // Sauvegarde  des compatibilités pour l'animal
                 if (AddedAnimalCompatibilities.Count > 0)
@@ -222,7 +201,7 @@ namespace RefugeWPF.CouchePresentation.ViewModel
                     foreach (AnimalCompatibilityDTO acdto in AddedAnimalCompatibilities)
                     {
                         AnimalCompatibility ac = new AnimalCompatibility(
-                            savedAnimal,
+                            animal,
                             acdto.Compatibility,
                             acdto.Value,
                             acdto.Description
@@ -231,17 +210,33 @@ namespace RefugeWPF.CouchePresentation.ViewModel
 
                         this.animalDataService.CreateAnimalCompatibility(ac);
 
+                        savedAnimal.AnimalCompatibilities.Add(ac);
+
 
                     }
 
-                    AddedAnimalCompatibilities.Clear();
+
                 }
+
+                // Mettre à jour la liste d'animaux
+                Debug.WriteLine($"Index of {animal.Name} : {Animals.IndexOf(AnimalToUpdate!)}");
+                Animals[Animals.IndexOf(AnimalToUpdate!)] = savedAnimal;
+
+                // Vider la liste temporaire des compatibilités de l'animal
+                AddedAnimalCompatibilities.Clear();
+
+
+
+
+
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Erreur l'ajout d'une compatibilité pour un animal. Message : {ex.Message}.\n Erreur : {ex}");
-                MessageBox.Show($"Erreur l'ajout d'une compatibilité pour un animal.");
+                Debug.WriteLine($"Erreur lors la mise à jour d'un animal.\nMessage : {ex.Message}.\nErreur : {ex}");
+                MessageBox.Show($"Erreur lors la mise à jour d'un animal.\nMessage : {ex.Message}.");
             }
+
+            
 
         }
 

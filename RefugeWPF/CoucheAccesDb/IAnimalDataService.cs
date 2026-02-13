@@ -67,6 +67,14 @@ namespace RefugeWPF.CoucheAccesDB
 
         /**
          * <summary>
+         *  Récupérer la liste des compatibilités pour un animal
+         * </summary>
+         * 
+         */
+        List<AnimalCompatibility> GetAnimalCompatibilities(Animal animal);
+
+        /**
+         * <summary>
          *  Ajouter une compatibilité pour un animal
          * </summary>
          */

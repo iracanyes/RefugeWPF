@@ -98,18 +98,18 @@
                     AutoGenerateColumns="False"
                 >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated}" Width="120" />
-                        <DataGridTextColumn Header="Date de vaccination" Binding="{Binding DateVaccination}" Width="150"/>
+                        <DataGridTextColumn Header="Date de création" Binding="{Binding DateCreated, StringFormat={}{0:dd/MM/yyyy hh:mm}}" />
+                        <DataGridTextColumn Header="Date de vaccination" Binding="{Binding DateVaccination, StringFormat={}{0:dd/MM/yyyy}}" Width="150"/>
                         <DataGridCheckBoxColumn Header="Réalisé" Binding="{Binding Done}" Width="150"/>
                         <DataGridTextColumn Header="Nom du vaccin" Binding="{Binding Vaccine.Name}" Width="150"/>
                         <DataGridTextColumn Header="Nom de l'animal" Binding="{Binding Animal.Name}" Width="150"/>
                         <DataGridTextColumn Header="Type" Binding="{Binding Animal.Type}" Width="80"/>
                         <DataGridTextColumn Header="Genre" Binding="{Binding Animal.Gender}" Width="50"/>
                         <DataGridTextColumn Header="Couleurs" Binding="{Binding Animal.AnimalColors, Converter={StaticResource AnimalColorsToStringConverter}}" />
-                        <DataGridTextColumn Header="Date de naissance" Binding="{Binding Animal.BirthDate}" Width="120" />
-                        <DataGridTextColumn Header="Date de décès" Binding="{Binding Animal.DeathDate}" Width="120" />
+                        <DataGridTextColumn Header="Date de naissance" Binding="{Binding Animal.BirthDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
+                        <DataGridTextColumn Header="Date de décès" Binding="{Binding Animal.DeathDate, StringFormat={}{0:dd/MM/yyyy}}" Width="120" />
                         <DataGridCheckBoxColumn Header="Stérilisé" Binding="{Binding Animal.IsSterilized}" Width="80" />
-                        <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization}" />
+                        <DataGridTextColumn Header="Date de stérilisation" Binding="{Binding Animal.DateSterilization, StringFormat={}{0:dd/MM/yyyy}}" />
                         <DataGridTextColumn Header="Particularité" Binding="{Binding Animal.Particularity}"  Width="180"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Animal.Description}" Width="180"/>
 
